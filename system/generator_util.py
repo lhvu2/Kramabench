@@ -8,8 +8,6 @@ import re
 import time
 import warnings
 from abc import ABC, abstractmethod
-from collections import Counter
-from copy import deepcopy
 from typing import Any, Generic, TypeVar
 
 from colorama import Fore, Style
@@ -19,7 +17,7 @@ from openai.types.chat.chat_completion import ChatCompletion
 # from tenacity import retry, stop_after_attempt, wait_exponential
 from together import Together
 from together.types.chat_completions import ChatCompletionResponse
-
+import PyPDF2
 
 # DEFINITIONS
 GenerationOutput = tuple[dict, str | None, str | None]
@@ -30,7 +28,16 @@ OpenAIModelList = ["gpt-4o", "gpt-4o-mini", "gpt-4o-v", "gpt-4o-mini-v"]
 TogetherModelList = ["mixral", "llama3", "llama3-v"]
 
 
-
+def pdf_to_text(pdf_path: str | os.PathLike) -> str:
+    """
+    Convert a PDF file to text.
+    """
+    with open(pdf_path, 'rb') as file:
+        reader = PyPDF2.PdfReader(file)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text()
+    return text
 
 
 def generator_factory(model: str, verbose: bool = False) -> BaseGenerator:
