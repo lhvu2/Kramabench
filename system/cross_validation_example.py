@@ -50,7 +50,6 @@ class ExampleCrossValidationSystem(System):
         assert isinstance(models["suggesters"], list)
         assert isinstance(models["merger"], str)
 
-        # run the models
         self.suggesters = []
         self.merger = None
         for model in models["suggesters"]:
