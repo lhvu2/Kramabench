@@ -25,7 +25,7 @@ ContextType = TypeVar("ContextType")
 InputType = TypeVar("InputType")
 
 OpenAIModelList = ["gpt-4o", "gpt-4o-mini", "gpt-4o-v", "gpt-4o-mini-v"]
-TogetherModelList = ["mixral", "llama3", "llama3-v"]
+TogetherModelList = ["mixtral", "llama3", "llama3-v"]
 
 
 def pdf_to_text(pdf_path: str | os.PathLike) -> str:

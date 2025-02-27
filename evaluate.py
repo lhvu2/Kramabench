@@ -1,4 +1,4 @@
-""" This script can be used to evaluate the results of a system run.
+"""This script can be used to evaluate the results of a system run.
 The systems can be called using the run_pipeline function in system.api with the following run types:
 - baseline: single model name (str)
 - cross_validation: list of model names to cross validate, and a final model to merge the results
@@ -14,15 +14,27 @@ import traceback
 import pandas as pd
 
 from benchmark.metrics import Precision, Recall, F1, BleuScore, RougeScore, Success
-
-METRICS = [Precision, Recall, F1, BleuScore, RougeScore, Success]
+from systems import ExampleBaselineSystem
+from fixtures import SUTFactory, MetricFactory
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sut", default=None, help="The system to benchmark")
-    parser.add_argument("--workload", default="queries/easy/demo.json", help="The json file containing the input queries")
-    parser.add_argument("--result", default="./results", help="The root path where the results of the pipelines are stored.")
-    parser.add_argument("--verbose", default=False, help="Whether to print filenames as they are processed")
+    parser.add_argument("--sut", default="baseline-gpt-4o", help="The system to benchmark")
+    parser.add_argument(
+        "--workload",
+        default="workload/jun-easy.json",
+        help="The json file containing the input queries",
+    )
+    parser.add_argument(
+        "--result",
+        default="./results",
+        help="The root path where the results of the pipelines are stored.",
+    )
+    parser.add_argument(
+        "--verbose",
+        default=False,
+        help="Whether to print filenames as they are processed",
+    )
 
     args = parser.parse_args()
     sut = args.sut
@@ -37,18 +49,37 @@ def main():
         queries = json.load(f)
 
     result_path = f"{RESULT_DIR}/{sut}/{workload_name}"
-    with open(result_path) as f:
-        sut_answers = json.load(f)    
-
+    try:
+        with open(result_path) as f:
+            sut_answers = json.load(f)
+    except Exception:
+        print(
+            f"Could not load the results of the system {sut} for workload {workload_name}. Processing"
+        )
+        data_path = "data/TODO"
+        if not os.path.exists(data_path):
+            os.makedirs(data_path)
+        sut = SUTFactory(sut)
+        sut.process_dataset(data_path)
+        for idx, query in enumerate(queries):
+            if verbose:
+                print(f"Processing query {idx}")
+            result = sut.serve_query(query)
+            sut_answers.append(result)
+        with open(result_path, "w") as f:
+            json.dump(sut_answers, f)
 
     workload_measures = []
     for idx, query in enumerate(queries):
         target = query
         predicted = sut_answers[idx]
-        
-        for metric in METRICS:
+
+        applicable_metrics = query.get("metrics", None)
+        breakpoint()
+        for metric in applicable_metrics:
+            metric_fn = MetricFactory(metric)
             try:
-                value = metric(predicted, target)
+                value = metric_fn(predicted, target)
             except Exception:
                 print("Exception:", traceback.format_exc())
                 if not verbose:
@@ -59,17 +90,18 @@ def main():
                 "workload": workload_name,
                 "query_idx": idx,
                 "metric": metric.name,
-                "value": value
-                }
+                "value": value,
+            }
             workload_measures.append(dict_measures)
 
     results_df = pd.DataFrame(workload_measures)
     results_df.to_csv(result_file, index=False)
-    if verbose: 
+    if verbose:
         print(results_df)
 
     # Logic to aggregate the results
-    # workload_results = [] 
-    
+    # workload_results = []
+
+
 if __name__ == "__main__":
     main()

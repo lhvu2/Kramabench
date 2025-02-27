@@ -1,15 +1,14 @@
-from system.generator_util import generator_factory, pdf_to_text
+from systems.generator_util import generator_factory, pdf_to_text
 from benchmark.benchmark_api import System
 import os
 import pandas as pd
 
 class ExampleBaselineSystem(System):
-    def __init__(self, model: str, *args, **kwargs):
-        self.name = "baseline"
+    def __init__(self,  model: str, name="baseline", verbose=False,*args, **kwargs):
+        super().__init__(name, *args, **kwargs)
         self.dataset_directory = None # TODO(user): Update me
         self.model = model
-        self.verbose = args.get("verbose", False)
-        super().__init__(self.name, *args, **kwargs)
+        self.verbose = verbose
         self.llm = generator_factory(model, verbose=self.verbose)
 
     def process_dataset(self, dataset_directory: str | os.PathLike) -> None:

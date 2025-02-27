@@ -1,7 +1,7 @@
 from typing import Any
 import os
 import pandas as pd
-from system.generator_util import generator_factory, pdf_to_text
+from systems.generator_util import generator_factory, pdf_to_text
 from benchmark.benchmark_api import System
 
 
