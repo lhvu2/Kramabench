@@ -18,8 +18,8 @@ def system_selector(sut: str = None):
     elif sut == "reflection-gpt-4o":
         return ExampleReflectionSystem({"executor": "gpt-4o", "reflector": "gpt-4o"})
     elif sut == "mixtrue-agent-gpt-4o-mini":
-        return ExampleMixtrueAgentSystem({"suggesters": ["gpt-4o-mini", "google/gemma-2b-it", "meta-llama/Llama-2-13b-chat-hf"], "merger": "gpt-4o-mini"})
+        return ExampleMixtrueAgentSystem({"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o-mini"})
     elif sut == "mixtrue-agent-gpt-4o":
-        return ExampleMixtrueAgentSystem({"suggesters": ["gpt-4o", "google/gemma-2b-it", "meta-llama/Llama-2-13b-chat-hf"], "merger": "gpt-4o"})
+        return ExampleMixtrueAgentSystem({"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o"})
     else:
         raise ValueError(f"System {sut} not found")

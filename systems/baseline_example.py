@@ -25,6 +25,7 @@ class ExampleBaselineSystem(System):
 
     def serve_query(self, query: str) -> dict | str:
         results = self.llm.generate(query)
+        print(results)
         return results
 
 

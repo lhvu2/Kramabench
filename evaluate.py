@@ -18,6 +18,24 @@ from benchmark.metrics import metric_factory
 from fixtures import system_selector
 
 
+def build_prompt(details):
+    prompt = "You will be given data sources and questions, please answer the questions based on the data sources. Plesae use <answer> to wrap the final answer, use <thinking> to wrap the thinking process if any."
+    for i, source in enumerate(details["data_sources"]):
+        prompt += f"\n\n<data_source_{i}>\n{source}\n</data_source_{i}>"
+    prompt += f"\n\n<question>{details['query']}</question>"
+    return prompt
+
+
+def parse_answer(answer):
+    answer = answer.strip()
+    # look for the the last <answer> and </answer>
+    start = answer.rfind("<answer>")
+    end = answer.rfind("</answer>")
+    if start == -1 or end == -1:
+        return answer
+    return answer[start+len("<answer>"):end]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sut", default="baseline-gpt-4o-mini", help="The system to benchmark")
@@ -67,8 +85,9 @@ def main():
         for idx, details in enumerate(queries):
             if verbose:
                 print(f"Processing query {idx}")
-            result = system.serve_query(details["query"])
-            sut_answers[idx] = result
+            prompt = build_prompt(details)
+            result = system.serve_query(prompt)
+            sut_answers[str(idx)] = parse_answer(result)
         os.makedirs(os.path.dirname(result_path), exist_ok=True)
         with open(result_path, "w") as f:
             json.dump(sut_answers, f)
@@ -76,7 +95,7 @@ def main():
     workload_measures = []
     for idx, details in enumerate(queries):
         target = details["answer"]
-        predicted = sut_answers[idx]
+        predicted = sut_answers[str(idx)]
 
         applicable_metrics = details["task_type"]["metrics"]
         for metric_str in applicable_metrics:

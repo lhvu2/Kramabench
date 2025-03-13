@@ -4,7 +4,6 @@ This file contains the Generator classes and generator factory.
 from __future__ import annotations
 
 import os
-from abc import abstractmethod
 
 from openai import OpenAI
 
@@ -33,18 +32,22 @@ class Generator():
         elif model in TogetherModelList:
             self.client = Together(api_key=get_api_key("TOGETHER_API_KEY"))
 
-    @abstractmethod
     def generate(self, prompt: str) -> str:
+        print(f"Generating with {self.model}")
+        print(f"Prompt: {prompt}")
         if isinstance(self.client, OpenAI):
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
+                temperature=0.0,
+                max_tokens=4000,
             )
             return response.choices[0].message.content
         elif isinstance(self.client, Together):
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
+                max_tokens=4000,
             )
             return response.choices[0].message.content
         else:
