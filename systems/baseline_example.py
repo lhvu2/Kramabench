@@ -3,12 +3,13 @@ from benchmark.benchmark_api import System
 import os
 import pandas as pd
 
+
 class ExampleBaselineSystem(System):
-    def __init__(self,  model: str, name="baseline",*args, **kwargs):
+    def __init__(self, model: str, name="baseline", *args, **kwargs):
         super().__init__(name, *args, **kwargs)
-        self.dataset_directory = None # TODO(user): Update me
+        self.dataset_directory = None  # TODO(user): Update me
         self.model = model
-        self.llm = Generator(model)
+        self.llm = Generator(model, verbose=self.verbose)
 
     def process_dataset(self, dataset_directory: str | os.PathLike) -> None:
         # read files based on the dataset_directory, could be pdf, csv, etc.
@@ -25,7 +26,5 @@ class ExampleBaselineSystem(System):
 
     def serve_query(self, query: str) -> dict | str:
         results = self.llm.generate(query)
-        print(results)
+        # print(results)
         return results
-
-

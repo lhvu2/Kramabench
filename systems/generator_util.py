@@ -25,16 +25,19 @@ def get_api_key(key: str) -> str:
 
 
 class Generator():
-    def __init__(self, model: str):
+    def __init__(self, model: str, verbose=False):
         self.model = model
         if model in OpenAIModelList:
             self.client = OpenAI(api_key=get_api_key("OPENAI_API_KEY"))
         elif model in TogetherModelList:
             self.client = Together(api_key=get_api_key("TOGETHER_API_KEY"))
 
+        self.verbose = verbose
+
     def generate(self, prompt: str) -> str:
-        print(f"Generating with {self.model}")
-        print(f"Prompt: {prompt}")
+        if self.verbose:
+            print(f"Generating with {self.model}")
+            print(f"Prompt: {prompt}")
         if isinstance(self.client, OpenAI):
             response = self.client.chat.completions.create(
                 model=self.model,

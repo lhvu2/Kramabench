@@ -3,28 +3,33 @@ from systems.mixture_agent_example import ExamplemixtureAgentSystem
 from systems.reflection_example import ExampleReflectionSystem
 
 
-def system_selector(sut: str = None):
-    if sut == "baseline-gpt-4o-mini":
-        return ExampleBaselineSystem("gpt-4o-mini")
-    elif sut == "baseline-gpt-4o":
-        return ExampleBaselineSystem("gpt-4o")
-    elif sut == "baseline-gemma-2b-it":
-        return ExampleBaselineSystem("google/gemma-2b-it")
-    elif sut == "baseline-llama-2-13b-chat-hf":
-        return ExampleBaselineSystem("meta-llama/Llama-2-13b-chat-hf")
-    elif sut == "baseline-deepseek-r1-distill-qwen-14b":
-        return ExampleBaselineSystem("deepseek-ai/DeepSeek-R1-Distill-Qwen-14B")
-    elif sut == "reflection-gpt-4o-mini":
-        return ExampleReflectionSystem({"executor": "gpt-4o-mini", "reflector": "gpt-4o-mini"})
-    elif sut == "reflection-gpt-4o":
-        return ExampleReflectionSystem({"executor": "gpt-4o", "reflector": "gpt-4o"})
-    elif sut == "mixture-agent-gpt-4o-mini":
-        return ExamplemixtureAgentSystem(
-            {"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o-mini"}
-        )
-    elif sut == "mixture-agent-gpt-4o":
-        return ExamplemixtureAgentSystem(
-            {"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o"}
-        )
-    else:
-        raise ValueError(f"System {sut} not found")
+def system_selector(sut: str = None, verbose=False):
+    # keep this for system level arguments
+    kwargs = {"verbose": verbose}
+
+    systems = {
+        "baseline-gpt-4o-mini": ExampleBaselineSystem("gpt-4o-mini", **kwargs),
+        "baseline-gpt-4o": ExampleBaselineSystem("gpt-4o", **kwargs),
+        "baseline-gemma-2b-it": ExampleBaselineSystem("google/gemma-2b-it", **kwargs),
+        "baseline-llama-2-13b-chat-hf": ExampleBaselineSystem(
+            "meta-llama/Llama-2-13b-chat-hf", **kwargs
+        ),
+        "baseline-deepseek-r1-distill-qwen-14b": ExampleBaselineSystem(
+            "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B", **kwargs
+        ),
+        "reflection-gpt-4o-mini": ExampleReflectionSystem(
+            {"executor": "gpt-4o-mini", "reflector": "gpt-4o-mini"}, **kwargs
+        ),
+        "reflection-gpt-4o": ExampleReflectionSystem(
+            {"executor": "gpt-4o", "reflector": "gpt-4o"}, **kwargs
+        ),
+        "mixture-agent-gpt-4o-mini": ExamplemixtureAgentSystem(
+            {"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o-mini"},
+            **kwargs,
+        ),
+        "mixture-agent-gpt-4o": ExamplemixtureAgentSystem(
+            {"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o"}, **kwargs
+        ),
+    }
+
+    return systems[sut]
