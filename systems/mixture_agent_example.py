@@ -1,9 +1,10 @@
-from typing import Any
 import os
-import pandas as pd
-from systems.generator_util import Generator, pdf_to_text
-from benchmark.benchmark_api import System
+from typing import Any
 
+import pandas as pd
+
+from benchmark.benchmark_api import System
+from systems.generator_util import Generator, pdf_to_text
 
 MERGER_PROMPT = """
 You are a helpful assistant that merges the results of the models.
@@ -38,9 +39,9 @@ def format_prompt_for_merger(original_request: str, results_of_other_models: lis
 
 # TODO: We need to set higher temperature for the suggesters models,
 # and lower temperature for the merger model.
-class ExampleMixtrueAgentSystem(System):
+class ExamplemixtureAgentSystem(System):
     def __init__(self, models: dict[str, Any], *args, **kwargs):
-        self.name = "mixtrue_agent"
+        self.name = "mixture_agent"
         self.dataset_directory = None # TODO(user): Update me
         self.models = models
         super().__init__(self.name, *args, **kwargs)

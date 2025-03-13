@@ -1,6 +1,7 @@
 from systems.baseline_example import ExampleBaselineSystem
+from systems.mixture_agent_example import ExamplemixtureAgentSystem
 from systems.reflection_example import ExampleReflectionSystem
-from systems.mixtrue_agent_example import ExampleMixtrueAgentSystem
+
 
 def system_selector(sut: str = None):
     if sut == "baseline-gpt-4o-mini":
@@ -17,9 +18,13 @@ def system_selector(sut: str = None):
         return ExampleReflectionSystem({"executor": "gpt-4o-mini", "reflector": "gpt-4o-mini"})
     elif sut == "reflection-gpt-4o":
         return ExampleReflectionSystem({"executor": "gpt-4o", "reflector": "gpt-4o"})
-    elif sut == "mixtrue-agent-gpt-4o-mini":
-        return ExampleMixtrueAgentSystem({"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o-mini"})
-    elif sut == "mixtrue-agent-gpt-4o":
-        return ExampleMixtrueAgentSystem({"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o"})
+    elif sut == "mixture-agent-gpt-4o-mini":
+        return ExamplemixtureAgentSystem(
+            {"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o-mini"}
+        )
+    elif sut == "mixture-agent-gpt-4o":
+        return ExamplemixtureAgentSystem(
+            {"suggesters": ["gpt-4o-mini", "gpt-4o-mini"], "merger": "gpt-4o"}
+        )
     else:
         raise ValueError(f"System {sut} not found")
