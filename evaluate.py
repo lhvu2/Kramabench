@@ -101,19 +101,19 @@ def main():
         for metric_str in applicable_metrics:
             metric = metric_factory(metric_str)
             try:
-                value = metric(predicted, target)
+                mean = metric(predicted, target)
             except Exception:
                 print("Exception:", traceback.format_exc())
                 if not verbose:
                     print("On query:", idx)
-                value = 0
+                mean = 0
 
             dict_measures = {
                 "workload": workload_name,
                 "sut": sut,
                 "query_idx": idx,
                 "metric": metric.name,
-                "value": value,
+                "value": mean,
             }
             workload_measures.append(dict_measures)
 
@@ -124,6 +124,27 @@ def main():
 
     #Logic to aggregate the results
     workload_results = []
+    # group results_df by workload and metric
+    for workload, group in results_df.groupby(["workload", "metric"]):
+        workload, metric = workload
+        mean = group["value"].mean()
+        std = group["value"].std() if len(group) > 1 else 0
+        workload_results.append({"sut":sut,"workload": workload, "metric": metric, "value_mean": mean, "value_std": std, "value_support": len(group)})
+
+    aggregated_df = pd.DataFrame(workload_results)
+    # read old aggregated results
+    try:
+        old_aggregated_df = pd.read_csv(f"{RESULT_DIR}/aggregated_results.csv")
+    except Exception:
+        old_aggregated_df = pd.DataFrame(columns=["sut", "workload", "metric", "value_mean", "value_std", "value_support"])
+
+    # remove old aggregated results with same sut and workload
+    old_aggregated_df = old_aggregated_df[~((old_aggregated_df["workload"] == workload) & (old_aggregated_df["sut"] == sut))]
+    aggregated_df = pd.concat([old_aggregated_df, aggregated_df])
+    aggregated_df.to_csv(f"{RESULT_DIR}/aggregated_results.csv", index=False)
+
+    if verbose:
+        print(aggregated_df[aggregated_df["workload"] == workload])
 
 if __name__ == "__main__":
     main()
