@@ -1,7 +1,8 @@
 from systems.generator_util import Generator, pdf_to_text
 from benchmark.benchmark_api import System
-import os
-import pandas as pd
+import sys
+sys.path.append('./')
+from utils import * 
 
 class BaselineLLMSystem(System):
     """
@@ -19,7 +20,14 @@ class BaselineLLMSystem(System):
         Process the dataset located in the specified directory.
         The dataset can contain files in various formats (e.g., PDF, CSV).
         """
-        pass
+        self.dataset_directory = dataset_directory
+        self.dataset = {}
+        # read the files
+        for file in os.listdir(dataset_directory):
+            if file.endswith(".pdf"):
+                self.dataset[file] = pdf_to_text(os.path.join(dataset_directory, file))
+            elif file.endswith(".csv"):
+                self.dataset[file] = pd.read_csv(os.path.join(dataset_directory, file))
 
     def serve_query(self, query: str) -> dict | str:
         """
