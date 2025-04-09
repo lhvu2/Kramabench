@@ -20,10 +20,24 @@ class BaselineLLMSystem(System):
         self.question_output_dir = None # to be set in run()
         self.question_intermediate_dir = None # to be set in run()
     
+    def _init_output_dir(self, output_dir:str, query_id:str) -> None:
+        """
+        Initialize the output directory for the question.
+        :param question: Question object
+        """
+        self.output_dir = output_dir
+        question_output_dir = os.path.join(self.output_dir, query_id)
+        if not os.path.exists(question_output_dir):
+            os.makedirs(question_output_dir)
+        self.question_output_dir = question_output_dir
+        self.question_intermediate_dir = os.path.join(self.question_output_dir, '_intermediate')
+        if not os.path.exists(self.question_intermediate_dir):
+            os.makedirs(self.question_intermediate_dir)
+
     def generate_prompt(self, query:str) -> str:
         """
         Generate a prompt for the LLM based on the question.
-        :param question: Question object
+        :param query: str
         :return: Prompt string
         """
         # Generate the RAG plan
@@ -92,6 +106,42 @@ class BaselineLLMSystem(System):
         print(f"Prompt saved to {prompt_fp}")
         return prompt
     
+    def extract_response(self, response, try_number:int):
+        """
+        Process the LLM response.
+        :param response: LLM response string
+        :return: Processed response
+        """
+        json_fp = ""
+        code_fp = ""
+        # Save the full response to a txt file
+        response_fp = os.path.join(self.question_output_dir, f"initial_response.txt")
+        with open(response_fp, 'w') as f:
+            f.write(response)
+        print(f"Response saved to {response_fp}")
+
+        # Assume the step-by-step plan is fixed after the first try
+        if try_number == 0:
+            # Extract the JSON array from the response
+            json_response = extract_code(response, pattern=r'```json(.*?)```')
+            #print("Extracted JSON:", json_response)
+            # Save the JSON response to a file
+            json_fp = os.path.join(self.question_output_dir, f"answer.json")
+            with open(json_fp, 'w') as f:
+                f.write(json_response)
+            print(f"JSON response saved to {json_fp}")
+        
+        # Extract the code from the response
+        code = extract_code(response, pattern=r'```python(.*?)```')
+        #print("Extracted Code:", code)
+        # Save the code to a file
+        code_fp = os.path.join(self.question_output_dir, '_intermediate', f"pipeline-{try_number}.py") #{question.id}-{try_number}
+        with open(code_fp, 'w') as f:
+            f.write(code)
+        print(f"Code saved to {code_fp}")
+
+        return json_fp, code_fp
+    
     def execute_code(self, code_fp, try_number:int):
         """
         Execute the code in the file and save the output.
@@ -118,6 +168,119 @@ class BaselineLLMSystem(System):
             f.write(result.stderr)
 
         return output_fp, error_fp
+    
+    def process_response(self, json_fp, output_fp):
+        """
+        Process the response and fill in the JSON response with the execution result.
+        :param question: Question object
+        :param json_fp: Path to the JSON file
+        :param output_fp: Path to the output file
+        """
+        # Load the JSON response
+        try: 
+            with open(json_fp, 'r') as f:
+                response = json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"** ERRORS ** decoding response JSON: {e}")
+            return
+
+        # Load the output file
+        try: 
+            with open(output_fp, 'r') as f:
+                output = json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"** ERRORS ** decoding output JSON: {e}")
+            return
+
+        # Fill in the JSON response with the execution result
+        for step in response:
+            id = step['id']
+            if id in output:
+                step['answer'] = output[id]
+            else:
+                step['answer'] = "No answer found."
+
+        # Save the updated JSON response
+        with open(json_fp, 'w') as f:
+            # Clean NaN values to null for strict JSON compliance
+            response = clean_nan(response)
+            json.dump(response, f, indent=4)
+        print(f"Updated JSON response saved to {json_fp}")
+    
+    def run_one_shot(self, query:str, output_dir:str) -> str:
+        """
+        This function demonstrates a simple one-shot LLM approach to solve the LLMDS benchmark.
+        """
+        self._init_output_dir(os.path.join(output_dir, 'one_shot'), question)
+            
+        # Generate the prompt
+        prompt = self.generate_prompt(question)
+        print("Prompt:", prompt)
+
+        # Get the model's response
+        messages=[
+            {"role": "system", "content": "You are an experienced data scientist."},
+            {"role": "user", "content": prompt}
+        ]
+        response = call_gpt(messages)
+        print("Response:", response)
+
+        # Process the response
+        json_fp, code_fp = self.extract_response(response, try_number=0)
+
+        # Execute the code (if necessary)
+        output_fp, error_fp = self.execute_code(code_fp, try_number=0)
+        # print("Execution Result:", result)
+
+        # Check if errors were generated
+        if os.path.getsize(error_fp) > 0:
+            # TODO: Handle the error case for the few-shot LLM
+            # For now, just print the error message
+            print(f"** ERRORS ** found in {error_fp}. Skipping JSON update.")
+        else:
+            # Fill in JSON response with the execution result
+            self.process_response(json_fp, output_fp)
+
+        return response
+    
+    def run_few_shot(self, query:str, output_dir:str) -> str:
+        """
+        This function demonstrates a simple few-shot LLM approach to solve the LLMDS benchmark.
+        """
+        self._init_output_dir(os.path.join(output_dir, 'few_shot'), question)
+
+        # Generate the prompt
+        prompt = self.generate_prompt(question)
+        print("Prompt:", prompt)
+
+        messages=[
+            {"role": "system", "content": "You are an experienced data scientist."},
+        ]
+
+        for try_number in range(5):
+            messages.append({"role": "user", "content": prompt})
+            # Get the model's response
+            response = call_gpt(messages)
+            print("Response:", response)
+            messages.append({"role": "assistant", "content": response})
+
+            # Process the response
+            if try_number == 0:
+                json_fp, code_fp = self.extract_response(response, try_number)
+            else: _, code_fp = self.extract_response(response, try_number)
+
+            # Execute the code (if necessary)
+            output_fp, error_fp = self.execute_code(code_fp, try_number)
+            # print("Execution Result:", result)
+
+            if os.path.getsize(error_fp) > 0:
+                prompt = self.generate_error_handling_prompt(code_fp, error_fp)
+            else:
+                # Fill in JSON response with the execution result
+                self.process_response(json_fp, output_fp)
+                break
+
+        return response
     
     def process_dataset(self, dataset_directory: str | os.PathLike) -> None:
         """
