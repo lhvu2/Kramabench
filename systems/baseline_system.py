@@ -58,7 +58,7 @@ class BaselineLLMSystem(System):
         # Initialize directories for output and intermediate files
         if output_dir := kwargs.get('output_dir'):
             self.output_dir = output_dir
-        else: self.output_dir = os.path.join(os.getcwd(), 'testresults') # Default output directory
+        else: self.output_dir = os.path.join(os.getcwd(), 'testresults/run1') # Default output directory
         self.question_output_dir = None # to be set in run()
         self.question_intermediate_dir = None # to be set in run()
     
@@ -84,11 +84,38 @@ class BaselineLLMSystem(System):
         """
         data_string = ""
         for file_name, data in self.dataset.items():
-            print(f"Reading {file_name}...")
+            if self.verbose: print(f"Reading {file_name}...")
             data_string += f"\nFile name: {file_name}\n"
-            data_string += get_table_string(data)
+            data_string += f"Column data types: {data.dtypes}\n"
+            data_string += f"Table:\n"
+            data_string += get_table_string(data, row_limit=100)
             data_string += "\n"+ "="*20 + "\n"
         return data_string
+    
+    def generate_error_handling_prompt(self, code_fp:str, error_fp:str) -> str:
+        """
+        Generate a prompt for the LLM to handle errors in the code.
+        :param code_fp: Path to the code file
+        :param error_fp: Path to the error file
+        :return: Prompt string
+        """
+        with open(code_fp, 'r') as f:
+            code = f.read()
+        with open(error_fp, 'r') as f:
+            errors = f.read()
+
+        prompt = f"""
+        Your task is to fix the following Python code based on the provided error messages.
+        Code:
+        {code}
+
+        Errors:
+        {errors}
+
+        Please provide the fixed code. 
+        Mark the code with ````python` and ````python` to indicate the start and end of the code block.
+        """
+        return prompt
     
     def generate_prompt(self, query:str) -> str:
         """
@@ -225,11 +252,17 @@ class BaselineLLMSystem(System):
 
         # Fill in the JSON answer with the execution result
         for step in answer:
-            id = step['id']
+            id = "main-task"
             if id in output:
                 step['answer'] = output[id]
-            else:
-                step['answer'] = "No answer found."
+            else: step['answer'] = "Warning: No answer found in the Python pipeline."
+            # Update the subtasks with the output
+            subtasks = step.get('subtasks', [])
+            for subtask in subtasks:
+                subtask_id = subtask['id']
+                if subtask_id in output:
+                    subtask['answer'] = output[subtask_id]
+                else: subtask['answer'] = "Warning: No answer found in the Python pipeline."
 
         # Save the updated JSON answer
         with open(json_fp, 'w') as f:
@@ -326,23 +359,38 @@ class BaselineLLMSystem(System):
         The query should be in natural language, and the response can be in either natural language or JSON format.
         """
         # TODO: Implement the logic to handle different types of queries
-        results = self.run_one_shot(query, query_id)
+        results = self.run_few_shot(query, query_id)
         return results
 
 def main():
     # Example usage
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    question = {
-        "id": "example-question",
-        "query": "What is the average rainfall in 2022?",
-        "dataset_directory": os.path.join(current_dir, "../data/environment"),
-    }
+    questions = [
+        {
+            "id": "environment-easy-1",
+            "query": "In 2018, how many bacterial exceedances were observed in freshwater beaches?",
+            "dataset_directory": os.path.join(current_dir, "../data/environment"),
+        },
+        {
+            "id": "environment-medium-1",
+            "query": "For the freshwater beaches, what is the difference between the percentage exceedance rate in 2023 and the historic average from 2002 to 2022?",
+            "dataset_directory": os.path.join(current_dir, "../data/environment"),
+        },
+        {
+            "id": "environment-hard-1",
+            "query": "For the marine beaches, what is the Pearson product-moment correlation from 2002 to 2023 between the rainfall amount in inches during the months June, July, August, and September and the percentage exceedance rate?",
+            "dataset_directory": os.path.join(current_dir, "../data/environment"),
+        }
+    ]
     
+    # Process each question
     baseline_llm = BaselineLLMSystem(model="gpt-4o")
-    baseline_llm.process_dataset(question["dataset_directory"])
-    # For debugging purposes, also input question.id
-    response = baseline_llm.serve_query(question["query"], question["id"])
-    print("Response:", response)
+    # Process the dataset
+    baseline_llm.process_dataset(questions[0]["dataset_directory"])
+    for question in questions:
+        print(f"Processing question: {question['id']}")
+        # For debugging purposes, also input question.id
+        response = baseline_llm.serve_query(question["query"], question["id"])
 
 if __name__ == "__main__":
     main()
