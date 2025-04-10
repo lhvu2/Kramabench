@@ -30,6 +30,7 @@ def call_gpt(messages, model="gpt-4o"):
             result = client.chat.completions.create(
                 model=model,
                 messages=messages,
+                temperature=0.2,
             )
             
             break # break out of while loop if no error
@@ -53,12 +54,19 @@ def call_gpt(messages, model="gpt-4o"):
     return res
 
 def get_table_string(table, row_limit = 100):
+    """
+    Convert a pandas DataFrame to a string with a specified row limit.
+    :param table: The pandas DataFrame to convert
+    :param row_limit: The maximum number of rows to include in the string
+    :return: A string representation of the DataFrame
+    """
     try: 
         #table = pd.read_csv(fp, engine='python', on_bad_lines='warn')
         if len(table) <= row_limit:
             return table.to_csv()
         # Randomly sample the table
-        table_string = table.sample(n=min(row_limit, len(table)), random_state=1)
+        #table_string = table.sample(n=min(row_limit, len(table)), random_state=1)
+        table_string = table.head(min(row_limit, len(table)))
         # Convert the table to a  comma-separated string
         table_string = table_string.to_csv()
         return table_string
