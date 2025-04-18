@@ -4,7 +4,7 @@ Easy
 3. Using Swarm Alpha satellite data, find the average atmospheric density measured between 400km and 450km altitude during May 11, 2024 (00:00 to 23:59 UTC). (numerical)
 4. [Done] Determine the approximate period of solar activity cycles and identify the years of minimum and maximum activity between 1960 and 2020 using historical yearly mean sunspot numbers (numerical)
 5. Acquire the total count of satellite maneuver in May 14 2024 for a set of starlink satellites, using TLE history.
-6. Using TLE data fetched for 5 specific Starlink satellites (provide NORAD IDs), determine the average rate of altitude decay (km/day) during the Gannon storm (May 10-13, 2024) and compare it to a preceding quiet period (May 1-4, 2024). (numerical comparison)
+6. Using TLE data fetched for 3 specific Starlink satellites (provide NORAD IDs 58214, 58600, 59049), determine the average rate of altitude decay (km/day) during the Gannon storm (May 10-13, 2024) and compare it to a preceding quiet period (May 1-4, 2024). (numerical comparison)
 
 Hard
 
