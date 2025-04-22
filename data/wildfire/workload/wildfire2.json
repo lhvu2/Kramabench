@@ -1,4 +1,4 @@
-[
+  [
   {
     "id": "wildfire-8",
     "query": "Did lighting or humans cause more fires impacting above 100 acres?",
@@ -25,7 +25,7 @@
     "query": "Which state has the most land impacted by fire, per capita?",
     "answer": "Wyoming",
     "answer_type": "exact",
-    "data_sources": [ "annual_report_2024.pdf", "<the population dataset>" ]
+    "data_sources": [ "annual_report_2024.pdf", "NST-EST2024-POP.xlsx" ]
   },
   {
     "id": "wildfire-12",
