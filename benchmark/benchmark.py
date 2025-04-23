@@ -6,7 +6,7 @@ from rouge_score import rouge_scorer
 from typing import Any, Dict, List
 
 
-from benchmark_api import System
+from benchmark.benchmark_api import System
 from benchmark.metrics import metric_factory
 
 class Executor:
@@ -43,8 +43,8 @@ class Executor:
         }
         """
         if self.verbose:
-            print(f"task_id: {task["id"]}")
-            print(f"query: {task["query"]}")
+            print(f"task_id: {task['id']}")
+            print(f"query: {task['query']}")
         model_output = self.system.serve_query(task["query"])
         response = {}
         response["task_id"] = task["id"]
@@ -194,13 +194,16 @@ class Benchmark:
             self,
             system_name: str,
             task_fixture_directory: str | os.PathLike,
+            system_output_directory: str | os.PathLike,
             cache_system_output: bool = False,
+            verbose: bool = False,
     ):
-        system_module = __import__("system")
-        system_class_ = getattr(system_module, system_name)
-        self.system = system_class_()
+        systems_module = __import__("systems")
+        system_class_ = getattr(systems_module, system_name)
+        self.system = system_class_(verbose=verbose, output_dir=system_output_directory)
         self.cache_system_output = cache_system_output
         self.task_fixture_directory = task_fixture_directory
+        self.verbose = verbose
     
     def run_benchmark(
             self,

@@ -10,22 +10,30 @@ from benchmark.metrics import metric_factory
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sut", type=str, default="baseline-gpt-4o-mini", help="The system under test.")
-    parser.add_argument("--workload", type=str, default="workload/jun-easy.json", help="Path to workload JSON file.")
-    parser.add_argument("--result", type=str, default="./results", help="Directory to store results.")
+    parser.add_argument("--sut", type=str, default="BaselineLLMSystemGPT4oFewShot", help="The system under test.")
+    parser.add_argument("--dataset_name", type=str, default="environment", help="Name of dataset.")
+    parser.add_argument("--workload_filename", type=str, default="environment.json", help="Name of workload JSON file.")
+    parser.add_argument("--result", type=str, default="./results", help="Directory to store benchmark results.")
     parser.add_argument("--task_fixtures", type=str, default="fixtures", help="Directory containing task fixture files.")
+    parser.add_argument("--project_root", type=str, default=os.getcwd(), help="Project root.")
     parser.add_argument("--use-cache", action="store_true", help="Use cached system outputs if available.")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging.")
     args = parser.parse_args()
 
     system_name = args.sut
-    workload_path = args.workload
     result_root_dir = args.result
     task_fixture_dir = args.task_fixtures
     use_cache = args.use_cache
     verbose = args.verbose
+    project_root_dir = args.project_root
+    dataset_name = args.dataset_name
+    workload_filename = args.workload_filename
+    # Setup output directory for system under test
+    system_output_dir = os.path.join(project_root_dir, f"test_outputs/{system_name}")
+    os.makedirs(system_output_dir, exist_ok=True)
 
-    workload_name = os.path.basename(workload_path)
+    workload_name = os.path.basename(workload_filename)
+    workload_path = os.path.join(project_root_dir, f"workload/{workload_filename}")
     system_result_dir = os.path.join(result_root_dir, system_name)
     os.makedirs(system_result_dir, exist_ok=True)
     result_path = os.path.join(system_result_dir, f"{workload_name}_results.json")
@@ -35,7 +43,9 @@ def main():
     benchmark = Benchmark(
         system_name=system_name,
         task_fixture_directory=task_fixture_dir,
+        system_output_directory=system_output_dir,
         cache_system_output=use_cache,
+        verbose=verbose,
     )
 
     if use_cache and os.path.exists(result_path):
@@ -45,7 +55,7 @@ def main():
     else:
         print(f"Running benchmark on workload: {workload_name}")
         results, evaluation_results = benchmark.run_benchmark(
-            dataset_directory="data/TODO",  # TODO: configure dataset path properly
+            dataset_directory=os.path.join(project_root_dir, f"data/{dataset_name}/input"),
             results_directory=system_result_dir,
             workload_path=workload_path,
             verbose=verbose
