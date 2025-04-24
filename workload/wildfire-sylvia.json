@@ -1,0 +1,139 @@
+[
+    {
+        "id": "wildfire-11",
+        "query": "According to NOAA, in Julies, are the size of a fire and the median wind speed in the area strongly correlated? The answer should be Yes or No.",
+        "answer": "No",
+        "answer_type": "exact",
+        "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-11-1",
+                "query": "Calculate the correlation coefficient between the size of a fire and the median wind speed in the area in Julies based on NOAA data.",
+                "answer": -0.01,
+                "answer_type": "number_approximate",
+                "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+            }
+        ]
+    },
+    {
+      "id": "wildfire-12",
+      "query": "According to NOAA, is there a difference between the breakdown of causes of fires between geographical regions for fires with known causes that start in the months of January, February, and March? The answer should be Yes or No.",
+      "answer": "Yes",
+      "answer_type": "exact",
+      "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ],
+      "subtasks": [
+        {
+            "id": "wildfire-12-1",
+            "query": "What are the geographical regions in wildfire studies based on NOAA definitions?",
+            "answer": ["California", "Great Basin", "Northwest", "Inland Empire", "Rocky Mountains", "Southwest"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-12-2",
+            "query": "What days of the year are January, February, and March? Answer with a list [start_day, end_day]",
+            "answer": [1, 92],
+            "answer_type": "list_numeric_approximate",
+            "data_sources": [ "noaa_wildfires.csv" ]
+        }, {
+            "id": "wildfire-12-3",
+            "query": "What are the causes of wildfire as defined by NOAA?",
+            "answer": ["natural", "human", "lightning", "other"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-12-4",
+            "query": "According to NOAA, in the months of January, February, and March, what are the breakdowns of wildfire causes in the California region? Give me a list of percentages.",
+            "answer": ["0.0%", "8.33%", "91.67%", "0.0%"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-12-5",
+            "query": "According to NOAA, in the months of January, February, and March, what are the breakdowns of wildfire causes in the Great Basin region? Give me a list of percentages.",
+            "answer": ["0.0%", "0.0%", "100.0%", "0.0%"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-12-6",
+            "query": "According to NOAA, in the months of January, February, and March, what are the breakdowns of wildfire causes in the Inland Empire region? Give me a list of percentages.",
+            "answer": ["14.29%", "0.0%", "85.71%", "0.0%"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-12-7",
+            "query": "According to NOAA, in the months of January, February, and March, what is the most common wildfire cause across all regions.",
+            "answer": ["human"],
+            "answer_type": "exact",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-12-8",
+            "query": "According to NOAA, in the months of January, February, and March, which regions have the most wildfires caused by lighting?",
+            "answer": ["California"],
+            "answer_type": "exact",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }
+      ]
+    },
+    {
+      "id": "wildfire-13",
+      "query": "What is the average elevation (in feet) of the weather stations used for fire site monitoring in the NOAA dataset?",
+      "answer": 3902.1,
+      "answer_type": "numeric_approximate",
+      "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv", "PublicView_RAWS_-3515561676727363726.csv" ],
+      "subtasks": [
+        {
+            "id": "wildfire-13-1",
+            "query": "How many RAWS weather stations are used by NOAA as firewatch weather stations?",
+            "answer": 2136,
+            "answer_type": "exact",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv", "PublicView_RAWS_-3515561676727363726.csv" ]
+        }, {
+            "id": "wildfire-13-2",
+            "query": "What do we need to do for the NOAA dataset in order to match data?",
+            "answer": "Clean the NWS ID column, conver to string, and pad to 6 digits to be consistent with the ID format.",
+            "answer_type": "string_approximate",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv", "PublicView_RAWS_-3515561676727363726.csv" ]
+        }
+      ]
+    },
+    {
+      "id": "wildfire-14",
+      "query": "Based on the NOAA dataset, controlling for the weather, do more aggressive suppression actually contribute to fire ending faster and affecting less buildings?",
+      "answer": "More aggressive suppression does not help fires end faster but helps fires affect less buildings.",
+      "answer_type": "string_approximate",
+      "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv"],
+      "subtasks": [
+        {
+            "id": "wildfire-14-1",
+            "query": "Which columns encode the suppression strategies for wildfire",
+            "answer": ["dominant_strategy_25_s", "dominant_strategy_50_s", "dominant_strategy_75_s", "subdom_strategy"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-14-2",
+            "query": "Which columns should we control for?",
+            "answer": ["avrh_mean", "wind_med", "erc_med", "rain_sum", "hec"],
+            "answer_type": "list",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-14-3",
+            "query": "Controlling for the weather-related columns and fire size in hectares, what is the coefficient of dominant_strategy_25_s on fire duration?",
+            "answer": -20.88,
+            "answer_type": "numeric_approximate",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }, {
+            "id": "wildfire-14-4",
+            "query": "Controlling for the weather-related columns and fire size in hectares, what is the coefficient of dominant_strategy_25_s on the number of residential houses damanged?",
+            "answer": 542.65,
+            "answer_type": "numeric_approximate",
+            "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+        }
+      ]
+    },
+    {
+      "id": "wildfire-15",
+      "query": "In 2016, what percentage of fires were brought under control with it raining moderately or heavily (>0.05 in) in the fire area on the same or previous day? Give an upper bound assuming that the narrowest diameter of the fire region is 1km.",
+      "answer": "19.55%",
+      "answer_type": "numeric_approximate",
+      "data_sources": [ "noaa_wildfires.csv", "WeatherEvents_Jan2016-Dec2022.csv" ]
+    }
+  ]
