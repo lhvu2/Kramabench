@@ -50,6 +50,6 @@
   },
   {
     "id": "wildfire-15",
-    "query": "On average, how much higher was PM2.5 on wildfire days in a 10 meter radius from the location of the fire?",
-  },
+    "query": "On average, how much higher was PM2.5 on wildfire days in a 10 meter radius from the location of the fire?"
+  }
 ]
