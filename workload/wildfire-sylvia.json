@@ -134,6 +134,36 @@
       "query": "In 2016, what percentage of fires were brought under control with it raining moderately or heavily (>0.05 in) in the fire area on the same or previous day? Give an upper bound assuming that the narrowest diameter of the fire region is 1km.",
       "answer": "19.55%",
       "answer_type": "numeric_approximate",
-      "data_sources": [ "noaa_wildfires.csv", "WeatherEvents_Jan2016-Dec2022.csv" ]
+      "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv", "WeatherEvents_Jan2016-Dec2022.csv" ]
+    },
+    {
+        "id": "wildfire-16",
+        "query": "According to NOAA, what percentage of wildfires account for 90% of residential houses damaged in 2008?",
+        "answer": "13.93%",
+        "answer_type": "numeric_approximate",
+        "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-16-1",
+                "query": "According to NOAA, how many residential houses were damaged due to wildfires in 2008?",
+                "answer": 370202,
+                "answer_type": "numeric_approximate",
+                "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv" ]
+            }
+        ]
+    },
+    {
+        "id": "wildfire-17",
+        "query": "Based on NOAA data, what are the top 3 states that lost the most residential property in value between 2005 and 2010 (including 2005 and 2010)? Answer in state full names.",
+        "answer": ["California", "Washington", "Montana"],
+        "answer_type": "list",
+        "data_sources": [ "noaa_wildfires.csv", "noaa_wildfires_variabledescrip.csv", "ZHVI.csv" ],
+        "subtasks": {
+            "id": "wildfire-17-1",
+            "query": "On what columns to join the wildfire data and the housing index price data?",
+            "answer": "start_year, start_day_of_year in wildfire data and unnamed volumn in housing index price data.",
+            "answer_type": "number_approximate",
+            "data_sources": [ "noaa_wildfires.csv", "ZHVI.csv" ]
+        }
     }
   ]
