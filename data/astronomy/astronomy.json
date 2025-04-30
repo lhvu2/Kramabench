@@ -215,7 +215,7 @@
     },
     {
         "id": "astronomy-easy-6",
-        "query": "Using TLE data fetched for Starlink satellites 58214 & 58600, calcualte the average rate of altitude decay (km/day) for the Gannon storm (May 10-13, 2024) and the preceding quiet period (May 1-4, 2024).",
+        "query": "Using TLE data fetched for Starlink satellites 58214 & 58600, calcualte the average rate of altitude decay (km/day) for the Gannon storm (May 10-13, 2024) and the preceding quiet period (May 1-4, 2024). Use earth's gravitational paremeter mu = 398600.4418 km^3/s^2, earth radius 6371.0 km.",
         "answer": {
             "individual_rates": [
                 {
@@ -357,12 +357,13 @@
     },
     {
         "id": "astronomy-hard-3",
-        "query": "Determine the best lag (from 0 to 48 hours) between atmospheric drag—measured as altitude change (in km) from TLE data of SATCAT 43180—and the OMNI AP index, that maximizes the r^2 correlation during May 1–30, 2024. TLE epoch times should be rounded to the nearest hour to align with AP measurements. Use hourly OMNI2 data.",
+        "query": "Determine the best lag (from 0 to 48 hours) between atmospheric drag—measured as altitude change (in km) from TLE data of SATCAT 43180—and the OMNI AP index, that maximizes the r^2 correlation during May 1–30, 2024. TLE epoch times should be rounded to the nearest hour to align with AP measurements. Use hourly OMNI2 data. omni2 data format specification can be found at omni2.text file.",
         "answer": 24,
         "answer_type": "exact",
         "data_sources": [
             "../data_local/TLE/43180.tle",
-            "../data_local/omni2_low_res/omni2_2024.dat"
+            "../data_local/omni2_low_res/omni2_2024.dat",
+            "../data_local/omni2_low_res/omni2.txt"
         ],
         "subtasks": [
             {
@@ -450,13 +451,14 @@
     },
     {
         "id": "astronomy-hard-5",
-        "query": "Using OMNI2 data, run the NRLMSISE-00 atmospheric model to predict neutral density values for Swarm-B throughout 2024. Derive model inputs (F10.7, F10.7A, daily Ap, 3-hour Ap vector) directly from the OMNI2 dataset. Compare predictions against measured neutral density from Swarm-B POD files and report RMSE over the entire year. Do not use external space weather feeds.",
-        "answer": "4.638e-13",
+        "query": "Using OMNI2 data, run the NRLMSISE-00 atmospheric model to predict neutral density values for Swarm-B throughout 2024. Derive model inputs (F10.7, F10.7A, daily Ap, 3-hour Ap vector) directly from the OMNI2 dataset. Compare predictions against measured neutral density from Swarm-B POD files and report RMSE over the entire year. Do not use external space weather feeds. OMNI2 data format specification can be found at omni2.text file.",
+        "answer": 4.638e-13,
         "answer_type": "number",
         "data_sources": [
             "../data_local/swarmb/SB_DNS_POD_2024_*.txt",
             "../data_local/omni2_low_res/omni2_2024.dat",
-            "../data_local/omni2_low_res/omni2_2023.dat"
+            "../data_local/omni2_low_res/omni2_2023.dat",
+            "../data_local/omni2_low_res/omni2.txt"
         ],
         "subtasks": [
             {
@@ -486,51 +488,46 @@
             {
                 "id": "astronomy-hard-5-5",
                 "query": "Compare predicted and ground-truth Swarm-B density, and compute RMSE",
-                "answer": "4.638e-13",
+                "answer": 4.638e-13,
                 "answer_type": "number"
             }
         ]
     },    
     {
         "id": "astronomy-hard-6",
-        "query": "Using the TIE-GCM model, driven by hourly F10.7 and Kp indices, simulate the thermosphere for the period September 2–29, 2019. Along the Swarm-A satellite trajectory (derived from SP3 precise orbit files), interpolate TIE-GCM output fields to the satellite’s location (latitude, longitude, altitude) and compute the geopotential energy (J/kg) at each timepoint. Report the mean geopotential energy over the period.",
+        "query": "Estimate the mean geopotential energy per unit mass (in J/kg) experienced by Swarm-A from September 2 to 29, 2019 using precise orbital data. Use SP3 files to determine the satellite’s geodetic position, and interpolate a mock geopotential field defined over latitude, longitude, and altitude to compute the potential energy at each timepoint. Average the results to compute the mean energy. Use earth radius 6371.0 km, and g = 9.80665 m/s^2.",
         "answer": 66822738.84,
         "answer_type": "number",
         "data_sources": [
-            "../data_local/swarm/POD/SW_OPER_SP3ACOM_2__201909*_T235942_*.sp3",
+            "../data_local/swarm/POD/SW_OPER_SP3ACOM_2__201909??T235942_201909??T235942_0201/*.sp3",
             "../data_local/mock_tiegcm_grid_sept2019.npz"
         ],
         "subtasks": [
             {
                 "id": "astronomy-hard-6-1",
-                "query": "Parse SP3 files to extract Swarm-A latitude, longitude, and altitude time series.",
-                "answer": "DataFrame (datetime, lat_deg, lon_deg, alt_km)",
+                "query": "Parse SP3 files for Swarm-A to obtain satellite positions and convert to geodetic coordinates (latitude, longitude, altitude)",
+                "answer": "Trajectory DataFrame with lat/lon/alt columns",
                 "answer_type": "intermediate"
             },
             {
                 "id": "astronomy-hard-6-2",
-                "query": "Load F10.7 and Kp indices to set up TIE-GCM (if needed).",
-                "answer": "Driver time series (F10.7, Kp)",
+                "query": "Load mock geopotential field grid defined over latitude, longitude, and altitude from TIE-GCM-style .npz file",
+                "answer": "3D numpy array with lat/lon/alt axes and geopotential values",
                 "answer_type": "intermediate"
             },
             {
                 "id": "astronomy-hard-6-3",
-                "query": "Load the pre-saved TIE-GCM mock grid from 'mock_tiegcm_grid_sept2019.npz'.",
-                "answer": "lat_grid, lon_grid, alt_grid numpy arrays",
+                "query": "Perform 3D interpolation of geopotential values at each satellite location using trilinear interpolation",
+                "answer": "Time series of geopotential energy values per unit mass",
                 "answer_type": "intermediate"
             },
             {
                 "id": "astronomy-hard-6-4",
-                "query": "Interpolate the geopotential field onto Swarm-A lat/lon/alt points at each time step.",
-                "answer": "Array of interpolated geopotential values (J/kg)",
-                "answer_type": "intermediate"
-            },
-            {
-                "id": "astronomy-hard-6-5",
-                "query": "Compute the mean geopotential energy over all points from September 2–29, 2019.",
+                "query": "Compute the mean geopotential energy from all interpolated values during the period",
                 "answer": 66822738.84,
                 "answer_type": "number"
             }
         ]
     }
+    
 ]
