@@ -1,0 +1,420 @@
+[
+    {
+        "id": "legal-easy-markos-1",
+        "query": "Between 2002 and 2024 inclusive, which year saw the greatest relative increase in total reports (Fraud, Identity Theft and Other) compared to the previous year?",
+        "answer": 2002,
+        "answer_type": "exact",
+        "data_sources": [
+            "2024_CSN_Report_Count.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-easy-markos-1-subtask-1",
+                "query": "Read the counts of reports between 2001 and 2024 inclusive, drop rows with nulls and cast to integers.",
+                "answer": [
+                    "df = pd.read_csv('legal/input/2024_CSN_Report_Count.csv', skiprows=2)",
+                    "df = df.dropna()",
+                    "df['Year'] = df['Year'].astype(int)",
+                    "df['# of Reports'] = df['# of Reports'].str.replace(',', '').astype(int)]"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "2024_CSN_Report_Count.csv"
+                ]
+            },
+            {
+                "id": "legal-easy-markos-1-subtask-2",
+                "query": "Compute the year which saw the greatest relative increase in total reports (Fraud, Identity Theft and Other) compared to the previous year.",
+                "answer": 2002,
+                "answer_type": "exact",
+                "data_sources": [
+                    "2024_CSN_Report_Count.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-easy-markos-2",
+        "query": "In which years were Fraud reports at least 50% of the total reports?",
+        "answer": [
+            2010,
+            2011,
+            2012,
+            2013,
+            2014,
+            2019
+        ],
+        "answer_type": "list",
+        "data_sources": [
+            "2024_CSN_Number_of_Reports_by_Type.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-easy-markos-2-subtask-1",
+                "query": "Read the counts of reports per type between 2001 and 2024 inclusive, drop rows with nulls and cast to integers.",
+                "answer": [
+                    "df = pd.read_csv('legal/input/2024_CSN_Number_of_Reports_by_Type.csv', skiprows=2)",
+                    "df = df.dropna()",
+                    "df['Year'] = df['Year'].astype(int)",
+                    "for col in df.columns[1:]:",
+                    "\tdf[col] = df[col].str.replace(',', '').astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "2024_CSN_Number_of_Reports_by_Type.csv"
+                ]
+            },
+            {
+                "id": "legal-easy-markos-2-subtask-2",
+                "query": "In which years were Fraud reports at least 50% of the total reports?",
+                "answer": [
+                    2010,
+                    2011,
+                    2012,
+                    2013,
+                    2014,
+                    2019
+                ],
+                "answer_type": "list",
+                "data_sources": [
+                    "2024_CSN_Number_of_Reports_by_Type.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-easy-markos-3",
+        "query": "Was there ever a year between 2001-2024 inclusive where 'Other' reports were more than half of the total reports?",
+        "answer": "False",
+        "answer_type": "exact",
+        "data_sources": [
+            "2024_CSN_Number_of_Reports_by_Type.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-easy-markos-3-subtask-1",
+                "query": "Read the counts of reports per type between 2001 and 2024 inclusive, drop rows with nulls and cast to integers.",
+                "answer": [
+                    "df = pd.read_csv('legal/input/2024_CSN_Number_of_Reports_by_Type.csv', skiprows=2)",
+                    "df = df.dropna()",
+                    "df['Year'] = df['Year'].astype(int)",
+                    "for col in df.columns[1:]:",
+                    "\tdf[col] = df[col].str.replace(',', '').astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "2024_CSN_Number_of_Reports_by_Type.csv"
+                ]
+            },
+            {
+                "id": "legal-easy-markos-3-subtask-2",
+                "query": "Was there ever a year between 2001-2024 inclusive where 'Other' reports were more than half of the total reports?",
+                "answer": "False",
+                "answer_type": "exact",
+                "data_sources": [
+                    "2024_CSN_Number_of_Reports_by_Type.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-easy-markos-4",
+        "query": "What is the minimum number of report categories that collectively account for at least 50% of reports in 2024?",
+        "answer": 3,
+        "answer_type": "exact",
+        "data_sources": [
+            "2024_CSN_Report_Categories.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-easy-markos-4-subtask-1",
+                "query": "Read the counts of reports per category in 2024, drop rows with nulls and cast to numeric types.",
+                "answer": [
+                    "df = pd.read_csv('legal/input/2024_CSN_Report_Categories.csv', skiprows=2)",
+                    "df = df.dropna()",
+                    "df['Percentage'] = df['Percentage'].str.replace('%', '').astype(float) / 100",
+                    "df['Rank'] = df['Rank'].astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            },
+            {
+                "id": "legal-easy-markos-4-subtask-2",
+                "query": "What is the minimum number of report categories that collectively account for at least 50% of reports in 2024?",
+                "answer": 3,
+                "answer_type": "exact",
+                "data_sources": [
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-easy-markos-5",
+        "query": "In 2024, what was the ratio of reports between the most frequent and the least frequent category (rounded to two decimal places)?",
+        "answer": 1097.47,
+        "answer_type": "numeric_approximate",
+        "data_sources": [
+            "2024_CSN_Report_Categories.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-easy-markos-5-subtask-1",
+                "query": "Read the counts of reports per category in 2024, drop rows with nulls and cast to numeric types.",
+                "answer": [
+                    "df = pd.read_csv('legal/input/2024_CSN_Report_Categories.csv', skiprows=2)",
+                    "df = df.dropna()",
+                    "df[' # of Reports '] = cat_df[' # of Reports '].str.replace(',', '').astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            },
+            {
+                "id": "legal-easy-markos-5-subtask-2",
+                "query": "In 2024, what was the ratio of reports between the most frequent and the least frequent category (rounded to two decimal places)?",
+                "answer": 1097.47,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-hard-markos-1",
+        "query": "Which are the top 5 distinct Metropolitan areas in New England in terms of Identity Theft reports?",
+        "answer": [
+            "Boston-Cambridge-Newton, MA-NH Metropolitan Statistical Area",
+            "Providence-Warwick, RI-MA Metropolitan Statistical Area",
+            "Hartford-West Hartford-East Hartford, CT Metropolitan Statistical Area",
+            "Bridgeport-Stamford-Danbury, CT Metropolitan Statistical Area",
+            "Worcester, MA Metropolitan Statistical Area"
+        ],
+        "answer_type": "list",
+        "data_sources": [
+            "State MSA Identity Theft data/*.csv",
+            "new_england_states.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-hard-markos-1-subtask-1",
+                "query": "Which states are in New England?",
+                "answer": [
+                    "Connecticut",
+                    "Maine",
+                    "Massachusetts",
+                    "New Hampshire",
+                    "Rhode Island",
+                    "Vermont"
+                ],
+                "answer_type": "list",
+                "data_sources": [
+                    "new_england_states.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-1-subtask-2",
+                "query": "Read the counts of reports per New England state, concatenate and cast to integers.",
+                "answer": [
+                    "state_data = {}",
+                    "for state in new_england_states:",
+                    "\tstate = state.replace(' ', '')",
+                    "\tstate_data[state] = pd.read_csv(f'legal/input/State MSA Identity Theft data/{state}.csv', skiprows=2).dropna()",
+                    "overall_df = pd.concat(state_data.values(), ignore_index=True).reset_index(drop=True)",
+                    "overall_df['# of Reports'] = overall_df['# of Reports'].apply(lambda x: x.replace(',', '') if isinstance(x, str) else x).astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "State MSA Identity Theft data/*.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-1-subtask-3",
+                "query": "Which are the top 5 distinct Metropolitan areas in New England in terms of Identity Theft reports?",
+                "answer": [
+                    "Boston-Cambridge-Newton, MA-NH Metropolitan Statistical Area",
+                    "Providence-Warwick, RI-MA Metropolitan Statistical Area",
+                    "Hartford-West Hartford-East Hartford, CT Metropolitan Statistical Area",
+                    "Bridgeport-Stamford-Danbury, CT Metropolitan Statistical Area",
+                    "Worcester, MA Metropolitan Statistical Area"
+                ],
+                "answer_type": "list",
+                "data_sources": [
+                    "new_england_states.csv",
+                    "State MSA Identity Theft data/*.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-hard-markos-2",
+        "query": "How many total identity theft reports were there in 2024 from cross-state Metropolitan Statistical Areas?",
+        "answer": 593524,
+        "answer_type": "numeric_approximate",
+        "data_sources": [
+            "State MSA Identity Theft data/*.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-hard-markos-2-subtask-1",
+                "query": "Read the counts of reports per state, concatenate and cast to integers.",
+                "answer": [
+                    "state_data = {}",
+                    "directory = 'legal/input/State MSA Identity Theft data/'",
+                    "for filename in os.listdir(directory):",
+                    "\tfilepath = os.path.join(directory, filename)",
+                    "\tstate_data[filename.split('.')[0]] = pd.read_csv(filepath, skiprows=2).dropna()",
+                    "overall_df = pd.concat(state_data.values(), ignore_index=True).reset_index(drop=True)",
+                    "overall_df['# of Reports'] = overall_df['# of Reports'].apply(lambda x: x.replace(',', '') if isinstance(x, str) else x).astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "State MSA Identity Theft data/*.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-2-subtask-2",
+                "query": "How many total identity theft reports were there in 2024 from cross-state Metropolitan Statistical Areas?",
+                "answer": 593524,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "State MSA Identity Theft data/*.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-hard-markos-3",
+        "query": "Among states with at least two metropolitan areas, find the metropolitan area that has the highest fraction of its state's identity theft reports in metropolitan areas. What state does it belong to?",
+        "answer": "Delaware",
+        "answer_type": "exact",
+        "data_sources": [
+            "State MSA Identity Theft data/*.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-hard-markos-3-subtask-1",
+                "query": "Read the counts of reports per state, concatenate and cast to integers.",
+                "answer": [
+                    "state_data = {}",
+                    "directory = 'legal/input/State MSA Identity Theft data/'",
+                    "for filename in os.listdir(directory):",
+                    "\tfilepath = os.path.join(directory, filename)",
+                    "\tstate_name = filename.split('.')[0]",
+                    "\tstate_data[state_name] = pd.read_csv(filepath, skiprows=2).dropna()",
+                    "\tstate_data[state_name]['state_name'] = state_name",
+                    "overall_df = pd.concat(state_data.values(), ignore_index=True).reset_index(drop=True)",
+                    "overall_df['# of Reports'] = overall_df['# of Reports'].apply(lambda x: x.replace(',', '') if isinstance(x, str) else x).astype(int)"
+                ],
+                "answer_type": "code",
+                "data_sources": [
+                    "State MSA Identity Theft data/*.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-3-subtask-2",
+                "query": "Among states with at least two metropolitan areas, find the metropolitan area that has the highest fraction of its state's identity theft reports in metropolitan areas. What state does it belong to?",
+                "answer": "Delaware",
+                "answer_type": "exact",
+                "data_sources": [
+                    "State MSA Identity Theft data/*.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-hard-markos-4",
+        "query": "If the 2007 reports were distributed exactly like the 2024 ones, how many reports in 2007 would be Auto Related (rounded to the nearest integer)?",
+        "answer": 32542,
+        "answer_type": "numeric_approximate",
+        "data_sources": [
+            "2024_CSN_Report_Count.csv",
+            "2024_CSN_Report_Categories.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-hard-markos-4-subtask-1",
+                "query": "How many total reports were there in 2007?",
+                "answer": 1070447,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Count.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-4-subtask-2",
+                "query": "What fraction of reports in 2024 were Auto Related?",
+                "answer": 0.0304,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-4-subtask-3",
+                "query": "If the 2007 reports were distributed exactly like the 2024 ones, how many reports in 2007 would be Auto Related (rounded to the nearest integer)?",
+                "answer": 32542,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Count.csv",
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "legal-hard-markos-5",
+        "query": "If the 2007 reports were distributed exactly like the 2024 ones, how many identity theft reports in 2007 would concern people ages 40 or older (rounded to the nearest thousand)?",
+        "answer": 91000,
+        "answer_type": "numeric_approximate",
+        "data_sources": [
+            "2024_CSN_Report_Count.csv",
+            "2024_CSN_Report_Categories.csv",
+            "2024_CSN_Identity_Theft_Reports_by_Age.csv"
+        ],
+        "subtasks": [
+            {
+                "id": "legal-hard-markos-5-subtask-1",
+                "query": "How many total identity theft reports were there in 2007?",
+                "answer": 1070447,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Count.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-5-subtask-2",
+                "query": "What fraction of reports in 2024 were Identity Theft reports?",
+                "answer": 0.1754,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Categories.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-5-subtask-3",
+                "query": "What fraction of identity theft reports in 2024 concerned people ages 40 or older?",
+                "answer": 0.4861,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Identity_Theft_Reports_by_Age.csv"
+                ]
+            },
+            {
+                "id": "legal-hard-markos-5-subtask-4",
+                "query": "If the 2007 reports were distributed exactly like the 2024 ones, how many identity theft reports in 2007 would concern people ages 40 or older (rounded to the nearest thousand)?",
+                "answer": 91000,
+                "answer_type": "numeric_approximate",
+                "data_sources": [
+                    "2024_CSN_Report_Count.csv",
+                    "2024_CSN_Report_Categories.csv",
+                    "2024_CSN_Identity_Theft_Reports_by_Age.csv"
+                ]
+            }
+        ]
+    }
+]
