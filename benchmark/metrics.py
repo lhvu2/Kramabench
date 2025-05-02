@@ -186,6 +186,7 @@ def metric_factory(metric_name: str):
         "f1": F1,
         "bleu": BleuScore,
         "rouge": RougeScore,
+        "llm_paraphrase": LLMParaphrase,
         "success": Success,
         "mean_squared_error": MeanSquaredError,
         "mean_absolute_error": MeanAbsoluteError,
