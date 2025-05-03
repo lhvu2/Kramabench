@@ -5,6 +5,21 @@
         "answer": 7805421,
         "answer_type": "exact",
         "data_sources": [ "noaa_wildfires_monthly_stats.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-easy-1-1",
+                "query": "How many acres were burned by wildfires in June 2015?",
+                "answer": 1868614,
+                "answer_type": "exact",
+                "data_sources": [ "noaa_wildfires_monthly_stats.csv" ]
+            }, {
+                "id": "wildfire-easy-1-2",
+                "query": "How many acres were burned by wildfires in July 2015?",
+                "answer": 3461087,
+                "answer_type": "exact",
+                "data_sources": [ "noaa_wildfires_monthly_stats.csv" ]
+            }
+        ],
         "runtime": 0.1
     },
     {
@@ -13,6 +28,21 @@
         "answer": "EACC",
         "answer_type": "exact",
         "data_sources": [ "usa.gpkg", "nifc_geographic_areas.gpkg" ],
+        "subtasks": [
+            {
+                "id": "wildfire-easy-2-1",
+                "query": "How many NIFC geographic areas are there?",
+                "answer": 10,
+                "answer_type": "exact",
+                "data_sources": [ "nifc_geographic_areas.gpkg" ]
+            }, {
+                "id": "wildfire-easy-2-2",
+                "query": "How many states intersect with the Eastern Area Coordination Center?",
+                "answer": 30,
+                "answer_type": "exact",
+                "data_sources": [ "usa.gpkg", "nifc_geographic_areas.gpkg" ]
+            }
+        ],
         "runtime": 3
     },
     {
@@ -21,6 +51,15 @@
         "answer": ["CA", "NV"],
         "answer_type": "list",
         "data_sources": [ "usa.gpkg", "nifc_geographic_areas.gpkg" ],
+        "subtasks": [
+            {
+                "id": "wildfire-easy-3-1",
+                "query": "How many NIFC geographic areas does California fall in?",
+                "answer": 5,
+                "answer_type": "exact",
+                "data_sources": [ "usa.gpkg", "nifc_geographic_areas.gpkg" ]
+            }
+        ],
         "runtime": 3
     },
     {
@@ -29,6 +68,21 @@
         "answer": 2065.10,
         "answer_type": "exact",
         "data_sources": [ "nifc_suppression_costs.csv", "nifc_human_caused_acres.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-hard-4-1",
+                "query": "What was the total suppression cost in 2023? Give cost as a whole number",
+                "answer": 3166300000,
+                "answer_type": "exact",
+                "data_sources": [ "nifc_suppression_costs.csv" ]
+            }, {
+                "id": "wildfire-hard-4-2",
+                "query": "What was the total number of acres burned by human-caused fires in 2023?",
+                "answer": 1533245,
+                "answer_type": "exact",
+                "data_sources": [ "nifc_human_caused_acres.csv" ]
+            }
+        ],
         "runtime": 0.1
     },
     {
@@ -37,6 +91,21 @@
         "answer": -1039,
         "answer_type": "exact",
         "data_sources": [ "noaa_wildfires_monthly_stats.csv", "nifc_wildfires.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-hard-5-1",
+                "query": "How many total fires have been reported by NOAA since 2000?",
+                "answer": 1708639,
+                "answer_type": "exact",
+                "data_sources": [ "noaa_wildfires_monthly_stats.csv" ]
+            }, {
+                "id": "wildfire-hard-5-2",
+                "query": "How many total fires have been reported by NIFC since 2000 (inclusive)?",
+                "answer": 1734605,
+                "answer_type": "exact",
+                "data_sources": [ "nifc_wildfires.csv" ]
+            }
+        ],
         "runtime": 0.1
     },
     {
@@ -45,6 +114,21 @@
         "answer": 0.519,
         "answer_type": "numeric_approximate",
         "data_sources": [ "noaa_wildfires_monthly_stats.csv", "nifc_wildfires.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-hard-6-1",
+                "query": "How many more fires were reported by NOAA compared to NIFC in 2023?",
+                "answer": -1009,
+                "answer_type": "exact",
+                "data_sources": [ "noaa_wildfires_monthly_stats.csv", "nifc_wildfires.csv" ]
+            }, {
+                "id": "wildfire-hard-6-2",
+                "query": "How many more acres burned were reported by NOAA compared to NIFC in 2023?",
+                "answer": -60274,
+                "answer_type": "exact",
+                "data_sources": [ "noaa_wildfires_monthly_stats.csv", "nifc_wildfires.csv" ]
+            }
+        ],
         "runtime": 0.1
     },
     {
@@ -53,6 +137,21 @@
         "answer": "Northern California, 2020",
         "answer_type": "list",
         "data_sources": [ "nifc_human_caused_acres.csv", "nifc_lightning_caused_acres.csv" ],
+        "subtasks": [
+            {
+                "id": "wildfire-hard-7-1",
+                "query": "What is the historical annual average number of acres burned in Northern California? Round to the nearest whole number",
+                "answer": 757286558096,
+                "answer_type": "exact",
+                "data_sources": [ "nifc_human_caused_acres.csv", "nifc_lightning_caused_acres.csv" ]
+            }, {
+                "id": "wildfire-hard-7-2",
+                "query": "What is the highest number of acres burned in a single year in Northern California?",
+                "answer": 15490121549012,
+                "answer_type": "exact",
+                "data_sources": [ "nifc_human_caused_acres.csv", "nifc_lightning_caused_acres.csv" ]
+            }
+        ],
         "runtime": 0.1
     },
     {
