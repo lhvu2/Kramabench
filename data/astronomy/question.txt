@@ -1,0 +1,62 @@
+Easy
+1. [Done] What is the estimation error, in terms of MSE, of NOAA SWPC's 3-day forecast of AP during March 10, 2025 to March 12, 2025? Use omni_5min2025.asc as groundtruth and  (numerical)
+    15.00
+2. [Done] Calculate the ratio of peak atmospheric mass density experienced by the two SWARM A satellite (one in Feb 2014 using swarma-wu016-20140314_to_20140317.csv and one in July 2018 using swarma-wu545-20180718_to_20180721.csv) during two distinct 3-day periods separated by several years.
+   7.5 : 1
+
+3. Using Swarm Alpha satellite data, find the average atmospheric density measured between 400km and 450km altitude during May 11, 2024 (00:00 to 23:59 UTC). (numerical)
+    8.593e+30  kg/m³
+4. [Done] Read the solar activity cycles and identify the top five years of minimum and maximum activity between 1960 and 2020 using historical yearly mean sunspot numbers (numerical)
+    max: 
+        - 1968 (Mean SSN: 150.0)
+        - 1979 (Mean SSN: 220.1)
+        - 1989 (Mean SSN: 211.1)
+        - 2000 (Mean SSN: 173.9)
+        - 2014 (Mean SSN: 113.3)
+    min:
+        - 1964 (Mean SSN: 15.0)
+        - 1976 (Mean SSN: 18.4)
+        - 1986 (Mean SSN: 14.8)
+        - 1996 (Mean SSN: 11.6)
+        - 2008 (Mean SSN: 4.2)
+
+5. Acquire the total count of satellite maneuver in May 14 2024 for a set of starlink satellites, using TLE history.
+    20
+6. Using TLE data fetched for 2 specific Starlink satellites (provide NORAD IDs 58214, 58600), determine the average rate of altitude decay (km/day) during the Gannon storm (May 10-13, 2024) and a preceding quiet period (May 1-4, 2024) (numerical)
+    1. 58214: Quiet Rate = +0.0193 km/day, Storm Rate = -0.0020 km/day, 58600: Quiet Rate = +0.0129 km/day, Storm Rate = +0.0275 km/day. 
+    2. Average Quiet Period Rate: (+0.0193 + 0.0129) / 2 = +0.0161 km/day, Average Storm Period Rate: (-0.0020 + 0.0275) / 2 = +0.0128 km/day
+
+Hard
+
+1. "Train a density prediction model using OMNI2 variables (f10.7_index, Kp_index, Dst_index_nT) and GOES variables (xrsb_flux_observed, xrsa_flux_observed) to forecast Swarm Alpha's atmospheric density 4 hours ahead. Specifically, use a 16-hour context window to project the input time series forward using a VAR(1) model, then fit a linear regression model to predict the next 4 hours of density. Use data from wu334 (OMNI/GOES: 2016-10-22 to 2016-10-23; Density: 2016-10-23 to 2016-10-24) for training, and wu335 (OMNI/GOES: 2016-10-25 to 2016-10-26; Density: 2016-10-29) for evaluation. Assume that all windows contain valid data. Note that the data for training VAR lies at the end of the OMNI2 and GOES input window, and the corresponding Swarm Alpha density data begins immediately afterward; i.e., they only overlap at a single timestamp where OMNI/GOES ends and Density begins. Report the RMSE between the predicted and observed density values over the 4-hour forecast window.
+    - 1.211e-13 
+
+
+2. Compare the predictive accuracy (using Root Mean Squared Error - RMSE) of two simple single-variable linear regression models forecasting Swarm Alpha’s along-track acceleration 3 hours ahead during May 11, 2024. Model 1 uses only the OMNI Kp index as input. Model 2 uses only the OMNI solar wind dynamic pressure (Pdyn) as input. Use a time-ordered split (first 70% for training, last 30% for testing). Report and compare the RMSE on the test set. (numerical comparison)
+    - Model Performance (RMSE on Test Set):
+        - Kp input: 6.1655e-07
+        - Pdyn input: 5.1206e-07
+
+3. Determine the best lag (from 0 to 48 hours) between atmospheric drag—measured as altitude change (in km) from TLE data of SATCAT 43180—and the OMNI AP index, that maximizes the r^2 correlation during May 1–30, 2024. TLE epoch times should be rounded to the nearest hour to align with AP measurements. Use hourly OMNI2 data. (numerical)
+    - best lag = 24 h   with  r^2 = 0.6536
+
+4. In the STORM-AI Warmup dataset (version 2), for the 10-day period from 2018-10-01 to 2018-10-10, compare all available variables coming from: OMNI2 (solar wind parameters, IMF measurements, geomagnetic indices, and proton flux metrics embedded within OMNI2),and Sat_Density (mean atmospheric density near Swarm-A orbit), against the Swarm-A satellite's hourly altitude change (∆altitude per hour, computed from POD SP3 data). Which variable shows the strongest Pearson correlation (positive or negative) with the hourly ∆altitude?
+    - Proton_flux_>30_Mev with a Pearson correlation coefficient of r = -0.166.
+
+5. Using OMNI2 data, run the NRLMSISE-00 atmospheric model to predict neutral density values for Swarm-B throughout 2024. Derive model inputs (F10.7, F10.7A, daily Ap, 3-hour Ap vector) directly from the OMNI2 dataset. Compare predictions against measured neutral density from Swarm-B POD files and report RMSE over the entire year. Do not use external space weather feeds. 
+    - 4.638e-13
+
+6. Using the Thermosphere-Ionosphere-Electrodynamics General Circulation Model (TIE-GCM), simulate the global thermosphere for the period September 2–29, 2019, driven by hourly F10.7 and Kp indices from the STORM-A warmup dataset. Along the trajectory of Swarm-A (Satellite 1), derived from its SP3 precise orbit files, interpolate the TIE-GCM model outputs to the satellite’s latitude, longitude, and altitude at each timepoint. At each timepoint, compute the geopotential energy (in J/kg) at the satellite’s location. Finally, report the mean geopotential energy (in J/kg) over the entire 2019-09-02 to 2019-09-29 period. Note: the difficulty should mostly come from setting up the pipeline in this question since the TIE-GCM implementation is available online but is a Fortran code repository. It does have a python frontend.
+    - Mean Geopotential Energy: 66822738.84 J/kg
+
+
+# unverified below.
+7. Which hour, from May 9 to May 14, 2024, has the highest satellite maneuver count normalized by solar activity for LEO satellites?
+8. During the 2024 Gannon Geomagnetic Storm, which type of satellite's altitude is affected more, geo-stationary or LEO? Sample 10 satellite from each group. (exact) 
+    - should probably provide which satellites to sample. Need to pull TLE data from internet. 
+9. Using TLE data, determine the approximate altitude band for each maneuvered satellite. Correlate the integrated Kp index with the total number of maneuvers performed by LEO satellites (e.g., altitude < 1000 km) in the 24 hours following the storm's peak Kp value. Does this correlation change significantly if calculated separately for satellites below 450km vs. those between 450km and 1000km?
+10. Calculate the correlation (Pearson's r) between the 1-hour lagged OMNI solar wind dynamic pressure (derived from proton density and wind speed) and the atmospheric density measured by Swarm Alpha during the May 2024 Gannon storm period (May 10-13, 2024). Ensure data is aligned temporally. (numerical)
+11. Using Jacchia-Bowman 2008 model for all Swarm satellites during the peak 12 hours of the Gannon storm, determine which satellite had the largest average absolute prediction error.
+12. Determine the maneuver (e.g., approximate delta-V inferred from the change in semi-major axis derived from TLEs immediately before and after the maneuver time) for a set of LEO satellites from May 10 to May 14, 2024. 
+13. Following 12, determine the peak atmospheric density experienced by each satellite (using Swarm data mapped to the satellite's approximate location, or a density model like TIE-GCM/NRLMSIS) in the 6 hours preceding the maneuver. 
+14. Following 13, is there a correlation between the peak preceding density and the estimated maneuver magnitude? (complex multi-source integration, TLE analysis, potential model use, correlation)
