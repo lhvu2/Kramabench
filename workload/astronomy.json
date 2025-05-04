@@ -58,7 +58,7 @@
     },  
     {
         "id": "astronomy-easy-2",
-        "query": "Calculate the ratio of peak atmospheric mass density experienced by Swarm A satellite during Feb 2014 (wu016 file) vs July 2018 (wu545 file).",
+        "query": "Calculate the ratio of peak atmospheric mass density experienced by Swarm A satellite during March 2014 (wu016 file) vs July 2018 (wu545 file).",
         "answer": 7.52,
         "answer_type": "exact",
         "runtime": 0.1,
