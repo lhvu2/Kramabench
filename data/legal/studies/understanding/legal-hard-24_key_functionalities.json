@@ -1,6 +1,6 @@
 [
-    "Custom CSV parser removes commas inside quoted strings, removes quotes, splits into columns/values and stores each sub-table.",
-    "Load the statewide identity-theft rankings file and the fraud-and-other rankings file.",
+    "CSV parsing that removes commas inside quoted strings, removes quotes, splits into columns/values and stores each sub-table.",
+    "Load 2024_CSN_State_Rankings_Identity_Theft_Reports.csv, 2024_CSN_State_Rankings_Fraud_and_Other_Reports.csv, all csv in State MSA Identity Theft data/.",
     "For every state/territory (row[1] is name) locate its row in both tables and add the two report counts (row[3] from each table) to get that state\u2019s total number of all reports.",
     "Determine the single state/territory with the highest combined total of reports across the two tables.",
     "Open that state\u2019s per-state MSA identity-theft file in \u201cState MSA Identity Theft data/<state>.csv\u201d.",

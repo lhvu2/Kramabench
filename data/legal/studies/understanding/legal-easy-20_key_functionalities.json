@@ -2,11 +2,10 @@
     "Read the file 2024_CSN_Number_of_Reports_by_Type.csv line-by-line.",
     "Clean each line: remove any commas that are inside quotes and strip the surrounding quote marks so that numbers containing commas are not split across columns.",
     "Parse the file into logical blocks separated by blank lines; treat the first block as a CSV-style sub-table whose header row is 'Number of Reports by Type'.",
-    "Store that sub-table in a TableCsv object (list of column names plus all data rows).",
-    "Within this sub-table, find the row whose first column equals the year string '2024'.",
-    "Convert every entry in that 2024 row, except the year itself, to integers.",
+    "Within sub-table, select rows with Year 2024.",
+    "Convert number entries to integers.",
     "Sum those converted numbers to obtain the total number of reports for 2024 across all categories.",
-    "Take the first numeric cell after the year in that row (assumed to be the count of Fraud reports).",
+    "Take the first numeric cell after the year in that row containing the count of Fraud reports.",
     "Compute the proportion of Fraud reports by dividing the Fraud count by the total 2024 report count.",
     "Return/print this proportion (which can be multiplied by 100 externally to express it as a percentage)."
 ]

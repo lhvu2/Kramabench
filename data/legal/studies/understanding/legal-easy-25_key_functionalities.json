@@ -1,9 +1,8 @@
 [
-    "Read the file 2024_CSN_Fraud, Identity Theft, and Other Reports by Military Consumers.csv into a dataframe.",
+    "Read the file 2024_CSN_Fraud, Identity Theft, and Other Reports by Military Consumers.csv.",
     "Isolate the slice of rows (index 7 to 13) that contains the fraud-loss table by military branch.",
-    "Take the first row of that slice as the true header, convert it to a Python list, and set it as the dataframe\u2019s column names.",
-    "Drop the header row from the data so that only data records remain.",
-    "Loop through each branch row, strip the \"$\" and comma characters from the \u2018Median Fraud Loss\u2019 string and convert it to an integer.",
-    "Keep track of the branch whose median fraud loss is the largest while iterating.",
+    "Take the first row of that slice/block as the true header row.",
+    "From the data rows, strip the \"$\" and comma characters from the \u2018Median Fraud Loss\u2019 string and convert it to an integer.",
+    "From clean data, find the branch whose median fraud loss is the largest.",
     "Print the name of the branch with the maximum median fraud loss."
 ]

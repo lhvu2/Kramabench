@@ -1,9 +1,9 @@
 [
     "Open the raw file 2024_CSN_State_Identity_Theft_Reports.csv and load every line.",
-    "Before splitting on commas, run a regex that removes commas found inside quoted strings so embedded commas are not treated as delimiters.",
-    "Iterate over the cleaned lines and split the content into blocks separated by blank lines; each block represents either a sub-table or a set of key\u2013value attributes.",
-    "For any block that looks like a table (first block or a block whose header is a single cell) treat the first non-blank line as the column list, the remaining lines as data rows, and wrap them in a TableCsv object; store each such object in the attributes dictionary under the sub-table\u2019s name.",
-    "Locate the sub-table named \"State: Identity Theft Reports\" from the attributes dictionary.",
-    "Loop over the rows of that sub-table, select the rows where the first column equals \"Alabama\", convert the value in the third column to an integer, and accumulate these values.",
-    "Return and print the accumulated total as the answer produced by solve_legal_hard_22()."
+    "Before splitting on commas, remove commas found inside quoted strings so embedded commas are not treated as delimiters.",
+    "Iterate over the cleaned lines and split the content into blocks separated by blank lines; each block represents either a sub-table or a set of key-value attributes.",
+    "For any block that looks like a table (first block or a block whose header is a single cell) treat the first non-blank line as the column list, the remaining lines as data rows, processing into tabular data and preserving the sub-table title.",
+    "Locate the sub-table named \"State: Identity Theft Reports\".",
+    "Loop over the rows of the identity theft reports sub-table, select the rows where the first column equals \"Alabama\", convert the value in the third column to an integer, and accumulate these values.",
+    "Return and print the accumulated total as the answer."
 ]

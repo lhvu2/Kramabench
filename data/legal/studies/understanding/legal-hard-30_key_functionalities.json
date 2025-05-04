@@ -1,7 +1,9 @@
 [
     "Collect file paths for every CSV in the 'State MSA Fraud and Other Data' directory and in the 'State MSA Identity Theft Data' directory.",
-    "For each Fraud CSV: (a) read the file, (b) drop the first row and last four rows that hold meta\u2010data / totals, (c) take the first remaining row as the header and strip whitespace from the names, (d) drop that header row from the data, (e) convert the '# of Reports' column from a comma-separated string to an integer, (f) add/overwrite entries in a dictionary that maps Metropolitan Area \u2192 number of fraud reports.",
-    "For each Identity-Theft CSV perform exactly the same cleaning steps and build a second dictionary mapping Metropolitan Area \u2192 number of identity-theft reports.",
+    "For each Fraud CSV: (a) read the file, (b) drop the first row and last four rows that hold meta\u2010data / totals, (c) take the first remaining row as the header, (d) drop that header row from the data",
+    "Convert the '# of Reports' column from a comma-separated string to an integer.",
+    "For each Identity-Theft CSV perform the same cleaning steps",
+    "Map Metropolitan Area \u2192 to number of identity-theft reports and fraud reports respectively.",
     "Iterate over every metro in the identity-theft dictionary; for metros that also appear in the fraud dictionary compare the two counts.  If any metro has identity-theft reports > fraud reports, print that metro name, print True, and stop the search.",
-    "Count and print the number of metros that appear in both dictionaries (overlap)."
+    "Count and print the number of metros that appear in both dictionaries (overlap/intersection)."
 ]

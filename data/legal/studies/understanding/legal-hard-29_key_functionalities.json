@@ -1,7 +1,7 @@
 [
-    "List all CSV files in the 'State MSA Fraud and Other data' directory and create full paths for them.",
-    "For each file, read the CSV, drop the first row and the last four footer rows, then use the first remaining row as the header (stripped of whitespace).",
-    "Skip any state file that contains data for fewer than five metropolitan areas.",
+    "List all CSV files in the 'State MSA Fraud and Other data' directory and read them.",
+    "For each CSV, drop the first row and the last four footer rows, then use the first remaining row as the header.",
+    "Skip/filter out any state that contains data for fewer than five metropolitan areas.",
     "Clean the '# of Reports' column by removing commas and converting the values to integers.",
     "Calculate each metro area's share of fraud reports within its state by dividing its '# of Reports' by the state's total '# of Reports'.",
     "Sort the metros in descending order by this share and take the top metro for that state.",

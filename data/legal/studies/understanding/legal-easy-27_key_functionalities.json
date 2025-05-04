@@ -1,8 +1,7 @@
 [
-    "Read the file 2024_CSN_State_Top_Ten_Report_Categories.csv into a DataFrame.",
-    "Remove the first metadata row and the last four summary/footer rows via df.iloc[1:-4].",
+    "Read the file 2024_CSN_State_Top_Ten_Report_Categories.csv.",
+    "Remove the first metadata row and the last four summary/footer rows.",
     "Take the first remaining row as the true header: convert it to a list of values and assign them (after stripping whitespace) as the DataFrame\u2019s column names.",
-    "Drop that header row from the data with df = df.iloc[1:].",
     "Group the cleaned data by the State column, and for each state collect the list of values in the Category column.",
     "For each state, check whether the string 'Prizes, Sweepstakes and Lotteries' appears in its Category list; if so, record the state.",
     "Count (len) the recorded states and print the resulting number \u2013 the number of states whose 2024 top-10 categories include Prizes, Sweepstakes and Lotteries."

@@ -1,9 +1,9 @@
 [
-    "Load 2024_CSN_Reports_by_Military_Consumers.csv and 2024_CSN_Report_Categories.csv into dataframes.",
-    "For the military file: slice rows 12-22 to isolate the Top Categories section, use its first row to set proper column names, strip whitespace, then drop that header row.",
-    "For the general population file: use the second row to set column names, strip whitespace, then remove the first two header rows and the last four footer rows to leave only category data.",
-    "Convert the '# of Reports' column in the military dataframe from comma-formatted strings to integers.",
+    "Load 2024_CSN_Reports_by_Military_Consumers.csv and 2024_CSN_Report_Categories.csv.",
+    "For the military file: slice rows 12-22 to isolate the Top Categories section, use its first row to set proper column names.",
+    "For the general population file: use the second row to set column names, then remove the first two header rows and the last four footer rows to leave only data rows.",
+    "Convert the '# of Reports' column in the military dataframe from comma-separated numeric strings to integers.",
     "Compute total military reports and the number of military Imposter Scam reports, then calculate the share (military_imposter_scams / total_military_reports).",
     "Retrieve the Percentage value for the Imposter Scams row in the general population dataframe, strip the '%' sign, and convert it to a decimal fraction.",
-    "Compare the military Imposter Scam share with the general population share; print 'Yes' if the military share is higher, otherwise print 'No'."
+    "Compare the military Imposter Scam share with the general population share."
 ]
