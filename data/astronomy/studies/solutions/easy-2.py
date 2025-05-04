@@ -13,7 +13,7 @@ BASE_DATA_DIR = '../../data/astronomy/input/STORM-AI/warmup/v2/'
 DENSITY_DIR = os.path.join(BASE_DATA_DIR, 'Sat_Density/')
 
 # Select two files from the list provided by the user
-FILE_1_NAME = 'swarma-wu016-20140314_to_20140317.csv' # Example Period 1 (Feb 2014)
+FILE_1_NAME = 'swarma-wu016-20140314_to_20140317.csv' # Example Period 1 (March 2014)
 FILE_2_NAME = 'swarma-wu545-20180718_to_20180721.csv' # Example Period 2 (July 2018)
 
 FILE_1_PATH = os.path.join(DENSITY_DIR, FILE_1_NAME)

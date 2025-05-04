@@ -1,11 +1,14 @@
+import json
 import logging
+import os
 from typing import List, Dict, Optional
 
 import ollama
 from typeguard import typechecked
+import untruncate_json
 
 from .llm_interface import LLMInterface
-from .prompts import PARAPHRASE_INSTRUCTION_PROMPT
+from .prompts import PARAPHRASE_INSTRUCTION_PROMPT, CODE_UNDERSTANDING_PROMPT
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -47,6 +50,19 @@ class OllamaInterface(LLMInterface):
             "content": f"A:\"{system_answer}\"; B:\"{reference}\""
         })
         return formatted_instruction_prompts
+    
+    @typechecked
+    def _format_code_understanding_messages(self, file_path: str | os.PathLike, task: Dict) -> List[Dict]:
+        """
+        Raises a FileNotFound error when `file_path` does not exist.
+        """
+        with open(file_path, 'r') as file:
+            code_string = file.read()
+        formatted_instruction_prompts = CODE_UNDERSTANDING_PROMPT
+        formatted_instruction_prompts.append({
+            "role": "user",
+            "content": f"Problem statement: {task["query"]} \n Code Snippet: {code_string} \n Data sources: {json.dumps(task['data_sources'])} \n\n"
+        })
 
     def evaluate_paraphrase(self, system_answer: str, reference: str) -> Optional[bool]:
         messages = self._format_paraphrase_evaluation_messages(system_answer, reference)
@@ -74,3 +90,31 @@ class OllamaInterface(LLMInterface):
             return False
         logging.warning(f"OllamaInterface.evaluate_paraphrase: Failed to extract T/F value from answer {answer}.")
         return None
+    
+    @typechecked
+    def get_code_key_functionalities(self, file_path: str | os.PathLike, task: Dict) -> Optional[List[str]]:
+        formatted_messages = self._format_code_understanding_messages(file_path, task)
+        json_answer = None
+        try:
+            response = self.client.chat(
+                model=self.model,
+                messages=formatted_messages,
+                format="json",
+                stream=False,
+            )
+            # Check if the conversation was too long for the context window, resulting in incomplete JSON
+            if not response["done"]:
+                logging.warning("OllamaInterface.get_code_key_functionalities: WARNING - Conversation kept going! Maybe output is truncated.")
+                answer = response["message"]["content"]
+                json_answer = json.loads(untruncate_json.complete(answer))
+            elif response["done_reason"] == "stop":
+                answer = response["message"]["content"]
+                json_answer = json.loads(answer)
+            else:
+                logging.error("OllamaInterface.get_code_key_functionalities: ERROR - Model is done but response not stopped")
+                return None
+        except Exception as e:
+            logging.error(f"OllamaInterface.get_code_key_functionalities: ERROR {e}")
+            return None
+        
+        return json_answer
