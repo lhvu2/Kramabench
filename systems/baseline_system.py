@@ -346,12 +346,21 @@ class BaselineLLMSystem(System):
 
         # Execute the code (if necessary)
         output_fp, error_fp = self.execute_code(code_fp, try_number=0)
-        # print("Execution Result:", result)
 
+        answer = None
+        pipeline_code = None
+        if os.path.getsize(error_fp) > 0:
+            pipeline_code = ""
+        else:
+            # Read the pipeline code
+            with open(code_fp, 'r') as f:
+                pipeline_code = f.read()
+        
         # Fill in JSON response with the execution result
         answer = self.process_response(json_fp, output_fp, error_fp)
+        output_dict = {"explanation": answer, "pipeline_code": pipeline_code}
 
-        return answer
+        return output_dict
     
     @typechecked
     def run_few_shot(self, query: str, query_id: str) -> Dict[str, str | Dict | List]:
@@ -370,6 +379,7 @@ class BaselineLLMSystem(System):
         ]
 
         answer = None
+        pipeline_code = None
 
         for try_number in range(5):
             messages.append({"role": "user", "content": prompt})
@@ -393,11 +403,16 @@ class BaselineLLMSystem(System):
             else:
                 # Fill in JSON response with the execution result
                 answer = self.process_response(json_fp, output_fp, error_fp=None)
+                # Read the pipeline code
+                with open(code_fp, 'r') as f:
+                    pipeline_code = f.read()
+                output_dict = {"explanation": answer, "pipeline_code": pipeline_code}
                 break
         
-        if answer is None:
+        if answer is None or pipeline_code is None:
             answer = {"id": "main-task", "answer": "Pipeline not successful after 5 tries."}
-        return answer
+            output_dict = {"explanation": answer, "pipeline_code": ""}
+        return output_dict
     
     def process_dataset(self, dataset_directory: str | os.PathLike) -> None:
         """
@@ -419,13 +434,16 @@ class BaselineLLMSystem(System):
         """
         Serve a query using the LLM.
         The query should be in natural language, and the response can be in either natural language or JSON format.
+        :param query: str
+        :param query_id: str
+        :return: output_dict {"explanation": answer, "pipeline_code": pipeline_code}
         """
         # TODO: Implement the logic to handle different types of queries
         if self.variance == "one_shot":
-            results = self.run_one_shot(query, query_id)
+            output_dict = self.run_one_shot(query, query_id)
         elif self.variance == "few_shot":
-            results = self.run_few_shot(query, query_id)
-        return results
+            output_dict = self.run_few_shot(query, query_id)
+        return output_dict
 
 def main():
     # Example usage
