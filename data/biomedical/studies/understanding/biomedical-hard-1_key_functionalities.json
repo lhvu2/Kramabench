@@ -1,0 +1,10 @@
+[
+    "Read the clinical information (mmc1.xlsx) and the two proteomics sheets (A-global-proteomics and B-phospho-proteomics) from mmc2.xlsx.",
+    "Filter for clinical records where Case_excluded == 'No' and Histologic_type is either 'Endometrioid' or 'Serous' to define the tumor-sample cohort.",
+    "Extract the list of case identifiers from those retained clinical rows.",
+    "Filter both proteomics tables for the selected case-identifier columns plus the 'idx' column that labels each protein/phosphosite.",
+    "Locate the PLK1 row in the global-proteomics sheet and the CHEK2-S163 row in the phospho-proteomics sheet and pull out the corresponding abundance values for the chosen cases.",
+    "Convert the two sets of abundances to numpy arrays and drop every position where the CHEK2-S163 value is NaN (ensuring matched sample pairs and excluding missing values).",
+    "Compute the Spearman rank correlation between the cleaned PLK1 and CHEK2-S163 abundance vectors.",
+    "Report the resulting correlation coefficient rounded to four decimal places."
+]

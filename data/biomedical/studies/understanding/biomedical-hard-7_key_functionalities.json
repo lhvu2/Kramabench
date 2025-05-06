@@ -1,0 +1,7 @@
+[
+    "Load every sheet from the Excel workbook (1-s2.0-S0092867420301070-mmc3.xlsx).",
+    "From the README sheet, locate the row whose \u201cDescription\u201d column contains the word \u201cacetylproteomics\u201d (case-insensitive) and extract the corresponding value in the \u201cSheet\u201d column; this gives the name of the acetylproteomics data sheet.",
+    "Retrieve the acetylproteomics data sheet.",
+    "Determine the number of genes by taking the row count of that sheet and adding 1 (because the sheet\u2019s layout causes the first data row to be misread as the header).",
+    "Print the resulting gene count as the answer."
+]

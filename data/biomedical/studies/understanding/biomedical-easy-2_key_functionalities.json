@@ -1,0 +1,7 @@
+[
+    "Load the clinical information from the Excel file 1-s2.0-S0092867420301070-mmc1.xlsx.",
+    "Filter _out_ any rows whose Case_excluded value is not 'No' so that only non-excluded cases are considered.",
+    "Filter for rows where Histologic_type is 'Serous'.",
+    "Compute the arithmetic mean of the Age column for this Serous subset, ignoring missing values.",
+    "Report that mean as the average age of patients with serous tumour samples."
+]

@@ -1,0 +1,7 @@
+[
+    "Load clinical data from 1-s2.0-S0092867420301070-mmc1.xlsx.",
+    "Filter for rows where Case_excluded == 'No'",
+    "Load the sheet \u201cB-APM subtypes\u201d from 1-s2.0-S0092867420301070-mmc7.xlsx.",
+    "Locate the row with the minimum value in the APP_Z_score column and read its idx identifier.",
+    "Using that idx, find the matching patient in the filtered clinical dataand return the patient\u2019s Age."
+]

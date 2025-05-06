@@ -1,0 +1,8 @@
+[
+    "Load the clinical information from 1-s2.0-S0092867420301070-mmc1.xlsx and load every sheet (except the README) from 1-s2.0-S0092867420301070-mmc4.xlsx.",
+    "Gather all non-README peptide sheets.",
+    "Filter peptide data for Peptide column equaling 'HPKPEVLGSSADGALLVSLDGLR'.",
+    "Take the comma-separated value(s) in Samples_With_Peptide, split them, and strip whitespace to create a list of sample IDs.",
+    "Filter the clinical information for rows whose idx column is in that list of sample IDs.",
+    "Retrieve the unique values in the Histologic_Grade_FIGO column for these samples; those unique grades constitute the answer."
+]

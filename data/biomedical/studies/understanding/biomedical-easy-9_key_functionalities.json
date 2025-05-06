@@ -1,0 +1,8 @@
+[
+    "Read the Excel workbook and load the sheet that contains the FDR values.",
+    "Keep only the columns that identify the gene and its FDR value.",
+    "Group the data by gene and compute the mean FDR for every gene.",
+    "Retrieve the average FDR calculated for the gene named CBX3.",
+    "Create a subset of the data that excludes all CBX3 rows and compute the overall mean FDR for this remaining set of genes.",
+    "Subtract the mean FDR of the non-CBX3 genes from the mean FDR of CBX3 to obtain the requested difference."
+]

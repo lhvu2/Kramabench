@@ -1,0 +1,10 @@
+[
+    "Read clinical data from 1-s2.0-S0092867420301070-mmc1.xlsx.",
+    "Filter for rows where Case_excluded == 'No'.",
+    "Filter data to histologic type 'Serous'.",
+    "Read mutation burden data from sheet 'B-APM subtypes' in 1-s2.0-S0092867420301070-mmc7.xlsx.",
+    "Collect the idx values for the remaining 'Serous' tumour cases.",
+    "Subset the mutation-burden table to rows whose idx appears in that serous-case list.",
+    "Take the column Log2_variant_per_Mbp and convert it from log2 scale to linear scale with 2 ** value.",
+    "Compute the median of these converted variant-per-Mbp values."
+]
