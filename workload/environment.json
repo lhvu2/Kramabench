@@ -3,7 +3,7 @@
         "id": "environment-easy-1",
         "query": "What percentage (to 3 decimal places) of water samples collected from Massachusetts beaches during the 2013 bathing season exceeded bacterial standards, leading to temporary closures?",
         "answer": 4.796,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.1,
         "data_sources": [
             "water-body-testing-2013.csv"
@@ -13,7 +13,7 @@
                 "id": "environment-easy-1-1",
                 "query": "How many water samples in total were collected?",
                 "answer": 15388,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2013.csv"
                 ]
@@ -22,7 +22,7 @@
                 "id": "environment-easy-1-2",
                 "query": "How many water samples exceeded bacterial standards?",
                 "answer": 738,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2013.csv"
                 ]
@@ -42,7 +42,7 @@
             2022,
             2023
         ],
-        "answer_type": "list",
+        "answer_type": "list_exact",
         "runtime": 1,
         "data_sources": [
             "water-body-testing-2002.csv",
@@ -73,7 +73,7 @@
                 "id": "environment-easy-2-1",
                 "query": "What is the average bacterial exceedance rate for freshwater beaches between 2002 and 2023 (inclusive) (to 2 decimal places)?",
                 "answer": 4.04,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2002.csv",
                     "water-body-testing-2003.csv",
@@ -112,7 +112,7 @@
                     2022,
                     2023
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2002.csv",
                     "water-body-testing-2003.csv",
@@ -144,7 +144,7 @@
         "id": "environment-easy-3",
         "query": "How many beaches had a higher bacterial exceedance rate for water samples collected in 2013 compared to 2012, excluding those with no samples in 2012?",
         "answer": 255,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 1,
         "data_sources": [
             "water-body-testing-2012.csv",
@@ -155,7 +155,7 @@
                 "id": "environment-easy-3-1",
                 "query": "What file contain the water samples collected in 2013 for each beach?",
                 "answer": "water-body-testing-2013.csv",
-                "answer_type": "exact",
+                "answer_type": "string_exact",
                 "data_sources": [
                     "water-body-testing-2013.csv"
                 ]
@@ -164,7 +164,7 @@
                 "id": "environment-easy-3-2",
                 "query": "What file contain the water samples collected in 2012 for each beach?",
                 "answer": "water-body-testing-2012.csv",
-                "answer_type": "exact",
+                "answer_type": "string_exact",
                 "data_sources": [
                     "water-body-testing-2012.csv"
                 ]
@@ -175,7 +175,7 @@
         "id": "environment-easy-4",
         "query": "What is the percentage (to integer) of time in 2019 to 2023 (inclusive) that the water quality at Quincy's Wollaston Beach has met swimming standards?",
         "answer": 86,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.1,
         "data_sources": [
             "water-body-testing-2019.csv",
@@ -194,7 +194,7 @@
                     "Wollaston @ Rice Road (DCR)",
                     "Wollaston @ Sachem Street (DCR)"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2019.csv",
                     "water-body-testing-2020.csv",
@@ -213,7 +213,7 @@
                     12.23,
                     12.93
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2019.csv",
                     "water-body-testing-2020.csv",
@@ -228,7 +228,7 @@
         "id": "environment-easy-5",
         "query": "Which region out of Boston, Chatham, Amherst, Ashburnham, had the most rainfall in June, July, August, in 2020?",
         "answer": "Ashburnham",
-        "answer_type": "exact",
+        "answer_type": "string_exact",
         "runtime": 0.1,
         "data_sources": [
             "monthly_precipitations_boston.csv",
@@ -246,7 +246,7 @@
                     "Jul",
                     "Aug"
                 ],
-                "answer_type": "exact",
+                "answer_type": "string_exact",
                 "data_sources": [
                     "monthly_precipitations_ashburnham.csv"
                 ]
@@ -257,7 +257,7 @@
         "id": "environment-easy-6",
         "query": "What is the average historical exceedance rate (to 2 decimal places) for marine beaches from 2002 to 2023 (inclusive)?",
         "answer": 5.14,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.1,
         "data_sources": [
             "water-body-testing-2022.csv",
@@ -287,7 +287,7 @@
                 "id": "environment-easy-6-1",
                 "query": "What is the 'Beach Type Description' of the marine beaches?",
                 "answer": "Marine",
-                "answer_type": "exact",
+                "answer_type": "string_exact",
                 "data_sources": [
                     "water-body-testing-2022.csv",
                     "water-body-testing-2021.csv",
@@ -339,7 +339,7 @@
                     5.38,
                     8.01
                 ],
-                "answer_type": "exact",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2022.csv",
                     "water-body-testing-2021.csv",
@@ -370,7 +370,7 @@
         "id": "environment-hard-7",
         "query": "What was the difference in bacterial exceedance rates (to 2 decimal places) for marine beach samples collected in 2023 between communities with more than 50% environmental justice (EJ) populations and those with less than 25% EJ populations?",
         "answer": 10.87,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.1,
         "data_sources": [
             "environmental-justice-populations.csv",
@@ -381,7 +381,7 @@
                 "id": "environment-hard-7-1",
                 "query": "How many samples were collected for marine beaches in 2023?",
                 "answer": 8491,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2023.csv"
                 ]
@@ -390,7 +390,7 @@
                 "id": "environment-hard-7-2",
                 "query": "How many communities have more than 50% EJ populations?",
                 "answer": 64,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "environmental-justice-populations.csv"
                 ]
@@ -399,7 +399,7 @@
                 "id": "environment-hard-7-3",
                 "query": "How many communities have less than 25% EJ populations?",
                 "answer": 75,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "environmental-justice-populations.csv"
                 ]
@@ -408,7 +408,7 @@
                 "id": "environment-hard-7-4",
                 "query": "What is the bacterial exceedance rate (to 2 decimal places) for the communities with more than 50% EJ populations?",
                 "answer": 15.12,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "environmental-justice-populations.csv",
                     "water-body-testing-2023.csv"
@@ -418,7 +418,7 @@
                 "id": "environment-hard-7-5",
                 "query": "What is the bacterial exceedance rate (to 2 decimal places) for the communities with less than 25% EJ populations?",
                 "answer": 4.25,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "environmental-justice-populations.csv",
                     "water-body-testing-2023.csv"
@@ -430,7 +430,7 @@
         "id": "environment-hard-8",
         "query": "What percentage of samples (to 2 decimal places) that failed to meet the swimming standard at Boston Harbor beaches had rainfall within 24 hours prior to sampling? A sample meets the standard if it contains fewer than 104 counts of Enterococcus per 100 milliliters of water.",
         "answer": 54.03,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.5,
         "data_sources": [
             "boston-harbor-beaches.txt",
@@ -458,7 +458,7 @@
                     "Tenean Beach",
                     "Wollaston Beach"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "boston-harbor-beaches.txt"
                 ]
@@ -467,7 +467,7 @@
                 "id": "environment-hard-8-2",
                 "query": "How many samples were collected from the Boston Harbor beaches?",
                 "answer": 23280,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "constitution_beach_datasheet.csv",
                     "carson-beach-datasheet.csv",
@@ -483,7 +483,7 @@
                 "id": "environment-hard-8-3",
                 "query": "How many of those samples have Enterococcus rate higher than 104 counts per 100 milliliters of water?",
                 "answer": 2071,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "constitution_beach_datasheet.csv",
                     "carson-beach-datasheet.csv",
@@ -499,7 +499,7 @@
                 "id": "environment-hard-8-4",
                 "query": "How many of those samples that have Enterococcus rate higher than 104 counts per 100 milliliters of water have rainfall within 24 hours prior to sampling?",
                 "answer": 1119,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "constitution_beach_datasheet.csv",
                     "carson-beach-datasheet.csv",
@@ -521,7 +521,7 @@
             "Castle Island Beach",
             "City Point Beach"
         ],
-        "answer_type": "list",
+        "answer_type": "list_exact",
         "runtime": 0.5,
         "data_sources": [
             "boston-harbor-beaches.txt",
@@ -549,7 +549,7 @@
                     "Tenean Beach",
                     "Wollaston Beach"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "boston-harbor-beaches.txt"
                 ]
@@ -558,7 +558,7 @@
                 "id": "environment-hard-9-2",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Constitution Beach?",
                 "answer": 99,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "constitution_beach_datasheet.csv"
                 ]
@@ -567,7 +567,7 @@
                 "id": "environment-hard-9-3",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Castle Island Beach?",
                 "answer": 0,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "pleasure_bay_and_castle_island_beach_datasheet.csv"
                 ]
@@ -576,7 +576,7 @@
                 "id": "environment-hard-9-4",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Pleasure Bay Beach?",
                 "answer": 0,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "pleasure_bay_and_castle_island_beach_datasheet.csv"
                 ]
@@ -585,7 +585,7 @@
                 "id": "environment-hard-9-5",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at City Point Beach?",
                 "answer": 0,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "city_point_beach_datasheet.csv"
                 ]
@@ -594,7 +594,7 @@
                 "id": "environment-hard-9-6",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at M Street Beach?",
                 "answer": 4,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "m-street-beach-datasheet.csv"
                 ]
@@ -603,7 +603,7 @@
                 "id": "environment-hard-9-7",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Carson Beach?",
                 "answer": 9,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "carson-beach-datasheet.csv"
                 ]
@@ -612,7 +612,7 @@
                 "id": "environment-hard-9-8",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Malibu Beach?",
                 "answer": 68,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "malibu_beach_datasheet.csv"
                 ]
@@ -621,7 +621,7 @@
                 "id": "environment-hard-9-9",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Tenean Beach?",
                 "answer": 104,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "tenean_beach_datasheet.csv"
                 ]
@@ -630,7 +630,7 @@
                 "id": "environment-hard-9-10",
                 "query": "How many samples collected between 2020 and 2024 (inclusive) have Enterococcus levels higher than 104 counts per 100 milliliters of water at Wollaston Beach?",
                 "answer": 239,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "wollaston_beach_datasheet.csv"
                 ]
@@ -641,7 +641,7 @@
         "id": "environment-hard-10",
         "query": "For Boston Harbor beaches located in communities with more than 90% environmental justice (EJ) populations, what is the Pearson correlation (to 3 decimal places) between rainfall in the past 3 days and Enterococcus levels? Estimate Enterococcus levels labeled as less than x as x/2, and those labeled as greater than x as x.",
         "answer": 0.206,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.2,
         "data_sources": [
             "environmental-justice-populations.csv",
@@ -663,7 +663,7 @@
                     "Tenean Beach",
                     "Wollaston Beach"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "boston-harbor-beaches.txt"
                 ]
@@ -672,7 +672,7 @@
                 "id": "environment-hard-10-2",
                 "query": "How many communities have more than 90% EJ populations?",
                 "answer": 27,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "environmental-justice-populations.csv"
                 ]
@@ -683,7 +683,7 @@
                 "answer": [
                     "Wollaston Beach"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "environmental-justice-populations.csv",
                     "water-body-testing-2023.csv"
@@ -695,7 +695,7 @@
         "id": "environment-hard-11",
         "query": "What was the average rainfall (to 2 decimal places) in the one-day period before sampling when water samples from Pleasure Bay Beach failed to meet swimming standards? A sample meets the standard if it contains fewer than 104 counts of Enterococcus per 100 milliliters of water.",
         "answer": 0.37,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.1,
         "data_sources": [
             "pleasure_bay_and_castle_island_beach_datasheet.csv"
@@ -705,7 +705,7 @@
                 "id": "environment-hard-11-1",
                 "query": "Which file contains the samples from Pleasure Bay Beach?",
                 "answer": "pleasure_bay_and_castle_island_beach_datasheet.csv",
-                "answer_type": "exact",
+                "answer_type": "string_exact",
                 "data_sources": [
                     "pleasure_bay_and_castle_island_beach_datasheet.csv"
                 ]
@@ -714,7 +714,7 @@
                 "id": "environment-hard-11-2",
                 "query": "How many samples from Pleasure Bay Beach had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 24,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "pleasure_bay_and_castle_island_beach_datasheet.csv"
                 ]
@@ -725,7 +725,7 @@
         "id": "environment-hard-12",
         "query": "Which Boston Harbor beach had the highest number of samples that failed to meet swimming standards when there was no rainfall in the preceding three days? A sample meets the standard if it contains fewer than 104 counts of Enterococcus per 100 milliliters of water.",
         "answer": "Wollaston Beach",
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.5,
         "data_sources": [
             "boston-harbor-beaches.txt",
@@ -753,7 +753,7 @@
                     "Tenean Beach",
                     "Wollaston Beach"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "boston-harbor-beaches.txt"
                 ]
@@ -762,7 +762,7 @@
                 "id": "environment-hard-12-2",
                 "query": "How many samples from Constitution Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 36,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "constitution_beach_datasheet.csv"
                 ]
@@ -771,7 +771,7 @@
                 "id": "environment-hard-12-3",
                 "query": "How many samples from Castle Island Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 0,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "pleasure_bay_and_castle_island_beach_datasheet.csv"
                 ]
@@ -780,7 +780,7 @@
                 "id": "environment-hard-12-4",
                 "query": "How many samples from Pleasure Bay Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 4,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "pleasure_bay_and_castle_island_beach_datasheet.csv"
                 ]
@@ -789,7 +789,7 @@
                 "id": "environment-hard-12-5",
                 "query": "How many samples from City Point Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 6,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "city_point_beach_datasheet.csv"
                 ]
@@ -798,7 +798,7 @@
                 "id": "environment-hard-12-6",
                 "query": "How many samples from M Street Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 7,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "m-street-beach-datasheet.csv"
                 ]
@@ -807,7 +807,7 @@
                 "id": "environment-hard-12-7",
                 "query": "How many samples from Carson Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 24,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "carson-beach-datasheet.csv"
                 ]
@@ -816,7 +816,7 @@
                 "id": "environment-hard-12-8",
                 "query": "How many samples from Malibu Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 20,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "malibu_beach_datasheet.csv"
                 ]
@@ -825,7 +825,7 @@
                 "id": "environment-hard-12-9",
                 "query": "How many samples from Tenean Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 40,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "tenean_beach_datasheet.csv"
                 ]
@@ -834,7 +834,7 @@
                 "id": "environment-hard-12-10",
                 "query": "How many samples from Wollaston Beach had no rainfall in the preceding three days and had Enterococcus levels higher than 104 counts per 100 milliliters of water?",
                 "answer": 129,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "wollaston_beach_datasheet.csv"
                 ]
@@ -845,7 +845,7 @@
         "id": "environment-hard-13",
         "query": "How many days in 2024 at Constitution Beach had one sampling point meet the standard while another did not? A sample meets the standard if it contains fewer than 104 counts of Enterococcus per 100 milliliters of water.",
         "answer": 11,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.1,
         "data_sources": [
             "constitution_beach_datasheet.csv"
@@ -859,7 +859,7 @@
                     "South",
                     "Middle"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "constitution_beach_datasheet.csv"
                 ]
@@ -870,7 +870,7 @@
         "id": "environment-hard-14",
         "query": "From 2007 to 2009 (inclusive), between fresh water beaches and marine beaches, which had a higher correlation between monthly rainfall and their exceedance rate in the summer (Jun, Jul, Aug)? Regions whose rainfall data effect Fresh water beaches are Boston, Chatham, Amherst, Ashburnham. Regions whose rainfall data effect Marine beaches are Boston and Chatham. Impute missing values with median of the month in non-missing years.",
         "answer": "Marine",
-        "answer_type": "exact",
+        "answer_type": "string_exact",
         "runtime": 0.2,
         "data_sources": [
             "water-body-testing-2009.csv",
@@ -890,7 +890,7 @@
                     10.56,
                     14.45
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "monthly_precipitations_boston.csv",
                     "monthly_precipitations_chatham.csv",
@@ -906,7 +906,7 @@
                     13.6125,
                     16.18
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "monthly_precipitations_boston.csv",
                     "monthly_precipitations_chatham.csv",
@@ -922,7 +922,7 @@
                     3.91,
                     2.70
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2009.csv",
                     "water-body-testing-2008.csv",
@@ -937,7 +937,7 @@
                     5.39,
                     6.75
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2009.csv",
                     "water-body-testing-2008.csv",
@@ -950,7 +950,7 @@
         "id": "environment-hard-15",
         "query": "Which fresh water beach is the most polluted since 2020 (inclusive)? Most polluted is defined as highest average exceedance rate since 2020, and only consider the beaches that are measured in all the years from 2020 to 2023 (inclusive).",
         "answer": "Damon Pond Beach (DCR)",
-        "answer_type": "exact",
+        "answer_type": "string_exact",
         "runtime": 0.2,
         "data_sources": [
             "water-body-testing-2020.csv",
@@ -963,7 +963,7 @@
                 "id": "environment-hard-15-1",
                 "query": "What is the number of beaches that are measured in all the years from 2020 to 2023 (inclusive)?",
                 "answer": 415,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2020.csv",
                     "water-body-testing-2021.csv",
@@ -977,7 +977,7 @@
         "id": "environment-hard-16",
         "query": "How many marine beaches (from 2002 to 2023 inclusive) remained safe to swimming for the entire time (i.e., no violation at all throughout the seasons; if no data for a beach in a particular year, assume safe)?",
         "answer": 60,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 1,
         "data_sources": [
             "water-body-testing-2002.csv",
@@ -1008,7 +1008,7 @@
                 "id": "environment-hard-16-1",
                 "query": "What is the number of unique marine beaches (from 2002 to 2023 inclusive) are there?",
                 "answer": 618,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2002.csv",
                     "water-body-testing-2003.csv",
@@ -1038,7 +1038,7 @@
                 "id": "environment-hard-16-2",
                 "query": "What is the number of unique beaches with violations?",
                 "answer": 558,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "water-body-testing-2002.csv",
                     "water-body-testing-2003.csv",
@@ -1070,7 +1070,7 @@
         "id": "environment-hard-17",
         "query": "What is the seasonal exceedance rate (in percentage, to 2 decimal places) of Chatham's Bucks Creek Beach in the summer (June, July, August) with the most rainfall in its area? Impute missing values with median of the month in non-missing years.",
         "answer": 47.37,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.5,
         "data_sources": [
             "monthly_precipitations_chatham.csv",
@@ -1081,7 +1081,7 @@
                 "id": "environment-hard-17-1",
                 "query": "What is the year with the most rainfall in Chatham?",
                 "answer": 2006,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "monthly_precipitations_chatham.csv"
                 ]
@@ -1114,7 +1114,7 @@
                     27.7,
                     68.75
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "monthly_precipitations_boston.csv",
                     "monthly_precipitations_chatham.csv",
@@ -1131,7 +1131,7 @@
                     4.66,
                     5.57
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2020.csv",
                     "water-body-testing-2021.csv",
@@ -1145,7 +1145,7 @@
         "id": "environment-hard-19",
         "query": "For marine beaches, is the year with the highest average exceedance rate difference (with the previous year) different or the same as the highest total rainfall difference (with the previous year)? Only count the rainfall in June, July, August in Boston and Chatham; impute missing values with median of the month in non-missing years. Answer with True or False.",
         "answer": "False",
-        "answer_type": "exact",
+        "answer_type": "string_exact",
         "runtime": 1,
         "data_sources": [
             "water-body-testing-2002.csv",
@@ -1224,7 +1224,7 @@
             "Pleasant Street",
             "Forest Street"
         ],
-        "answer_type": "exact",
+        "answer_type": "string_exact",
         "runtime": 0.5,
         "data_sources": [
             "monthly_precipitations_boston.csv",
@@ -1238,7 +1238,7 @@
                 "id": "environment-hard-20-1",
                 "query": "What is the region that had the least rainfall in the summer (June, July, August) in 2015?",
                 "answer": "Amherst",
-                "answer_type": "exact",
+                "answer_type": "string_exact",
                 "data_sources": [
                     "monthly_precipitations_boston.csv",
                     "monthly_precipitations_chatham.csv",
@@ -1268,7 +1268,7 @@
                     "White Pond Cottages",
                     "White Pond Town Landing"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "water-body-testing-2015.csv"
                 ]

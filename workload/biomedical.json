@@ -3,11 +3,11 @@
         "id": "biomedical-hard-1",
         "query": "What is the correlation between the abundance of the protein PLK1 and the abundance of CHEK2-S163 in tumor samples? Exclude samples not in the study and with missing values. Round the result to 4 decimal places.",
         "answer": 0.4765,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 2,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx",
-            "data/biomedical/raw/1-s2.0-S0092867420301070-mmc2.xlsx"
+            "1-s2.0-S0092867420301070-mmc2.xlsx"
         ],
         "subtasks": [
             {
@@ -110,7 +110,7 @@
                     "S102",
                     "S103"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc1.xlsx"
                 ]
@@ -180,7 +180,7 @@
                     0.243,
                     0.953
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc2.xlsx"
                 ]
@@ -250,7 +250,7 @@
                     0.134,
                     -1.45
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc2.xlsx"
                 ]
@@ -270,7 +270,7 @@
         "id": "biomedical-easy-2",
         "query": "What is the average age of patients with serous tumor samples analyzed in the study?",
         "answer": 68.5,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 150,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx"
@@ -293,7 +293,7 @@
                     "S102",
                     "S103"
                 ],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc1.xlsx"
                 ]
@@ -302,7 +302,7 @@
                 "id": "biomedical-easy-2-2",
                 "query": "Which is the age of patients with serous tumour samples in the study?",
                 "answer": [63.0, 83.0, 90.0, 59.0, 62.0, 65.0, 45.0, 60.0, 63.0, 77.0, 85.0, 70.0],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc1.xlsx"
                 ]
@@ -311,7 +311,7 @@
                 "id": "biomedical-easy-2-3",
                 "query": "What is the average the age of patients with serous tumour samples in the study?",
                 "answer": 68.5,
-                "answer_type": "exact",
+                "answer_type": "numeric_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc1.xlsx"
                 ]
@@ -322,7 +322,7 @@
         "id": "biomedical-hard-3",
         "query": "What is the age of the patient with the lowest APP-Z score?",
         "answer": 60,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 1,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx",
@@ -334,7 +334,7 @@
         "id": "biomedical-hard-4",
         "query": "What are the histological grades of tumors for which the peptide HPKPEVLGSSADGALLVSLDGLR was found?",
         "answer": ["FIGO Grade 2"],
-        "answer_type": "list",
+        "answer_type": "list_exact",
         "runtime": 0.5,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx",
@@ -345,19 +345,19 @@
                 "id": "biomedical-hard-4-1",
                 "query": "What file contains peptides found per tumor samples?",
                 "answer": "1-s2.0-S0092867420301070-mmc4.xlsx",
-                "answer_type": "string_approximate"
+                "answer_type": "string_exact"
             },
             {
                 "id": "biomedical-hard-4-2",
                 "query": "What samples are found with the peptide HPKPEVLGSSADGALLVSLDGLR?",
                 "answer": ["S028","S034","S040"],
-                "answer_type": "list"
+                "answer_type": "list_exact"
             },
             {
                 "id": "biomedical-hard-4-3",
                 "query": "What are the histological grades of tumors for which the peptide HPKPEVLGSSADGALLVSLDGLR was found?",
                 "answer": ["FIGO Grade 2"],
-                "answer_type": "list"
+                "answer_type": "list_exact"
             }
         ]
     },
@@ -365,7 +365,7 @@
         "id": "biomedical-hard-5",
         "query":"What is the median number of variants per Mbp for the serous tumor samples in the study? Round the result to 4 decimal places.",
         "answer": 2.6563,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.5,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx",
@@ -377,7 +377,7 @@
         "id": "biomedical-easy-6",
         "query":"What the most common histology grade (i.e., FIGO_stage) of the samples taken amongst patients in the study that are above 70?",
         "answer": "IA",
-        "answer_type": "exact",
+        "answer_type": "string_exact",
         "runtime": 0.5,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx"
@@ -388,7 +388,7 @@
         "id": "biomedical-hard-7",
         "query":"How many are the significant genes by acetylproteomics?",
         "answer": 16,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.5,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx"
@@ -399,7 +399,7 @@
         "id": "biomedical-hard-8",
         "query":"Which protein sites are found to be hyperactivated in CNV-high endometroid samples and are targeted by FDA-approved drugs?",
         "answer": ["CDK12", "SMARCA4"],
-        "answer_type": "list",
+        "answer_type": "list_exact",
         "runtime": 0.5,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc1.xlsx",
@@ -411,7 +411,7 @@
                 "id": "biomedical-hard-8-1",
                 "query":"What endometrioid samples are CNV-high?",
                 "answer": ["S018", "S031", "S054", "S070", "S082", "S090", "S100", "S101"],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc1.xlsx"
                 ]
@@ -420,7 +420,7 @@
                 "id": "biomedical-hard-8-2",
                 "query":"What proteins sites are hyperactivated in the endometrioid samples which are CNV-high?",
                 "answer": ["CDK12", "CHMP1B", "SMARCA4", "OLFM4", "TMCO4"],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "hyperactivated.csv"
                 ]
@@ -429,7 +429,7 @@
                 "id": "biomedical-hard-8-3",
                 "query":"What protein sites are targeted by FDA-approved drugs?",
                 "answer": ["ARAF", "BCR", "BLM", "BRD2", "BRD4", "CAST", "CBL", "CDK12", "EML4", "ETV5", "F2RL1", "ILF3", "JUNB", "KMT2A", "MARK2", "MSH6", "NCF1", "NCF2", "NPM1", "PML", "PRKCD", "PTGES3", "PTPN6", "RALBP1", "RBL1", "RICTOR", "RTN4", "SF3B1", "TOP2A", "DNMT1", "ATRX", "DNMT3A", "MAP2", "SMARCA4", "EPRS", "MAP4", "PRRC2A", "UBR4", "CDK4"],
-                "answer_type": "list",
+                "answer_type": "list_exact",
                 "data_sources": [
                     "1-s2.0-S0092867420301070-mmc6.xlsx"
                 ]
@@ -440,7 +440,7 @@
         "id": "biomedical-easy-9",
         "query":"What is the difference between the average false discovery rate (FDR) in CBX3 genes and the average FDR for the rest of the genes?",
         "answer": -0.008003975,
-        "answer_type": "exact",
+        "answer_type": "numeric_exact",
         "runtime": 0.5,
         "data_sources": [
             "1-s2.0-S0092867420301070-mmc3.xlsx"
