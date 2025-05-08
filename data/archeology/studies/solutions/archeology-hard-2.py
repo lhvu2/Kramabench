@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import pandas as pd
-data_path = "../input/"
+data_path = "../../input/"
 
 
 radioCarbonPath = data_path + "radiocarbon_database_regional.xlsx"
@@ -40,11 +40,17 @@ def is_increasing(row):
     previous_year = climateDF[climateDF["year"] < year].sort_values("year", ascending=False).head(1)
     next_year = climateDF[climateDF["year"] > year].sort_values("year", ascending=True).head(1)
 
-    previous_year = previous_year.iloc[0]
-    next_year = next_year.iloc[0]
-    
-    last_wet = previous_year['ODP 967 wet-dry index']
-    next_wet = next_year['ODP 967 wet-dry index']
+    try:
+        previous_year = previous_year.iloc[0]
+        last_wet = previous_year['ODP 967 wet-dry index']
+    except IndexError:
+        last_wet = 0
+
+    try:
+        next_year = next_year.iloc[0]
+        next_wet = next_year['ODP 967 wet-dry index']
+    except IndexError:
+        next_wet = last_wet
 
     differences = next_wet - last_wet
     if differences > 0:
@@ -53,11 +59,5 @@ def is_increasing(row):
         return 0
 
 
-
-radioCarbonDF["isIncreasing"] = radioCarbonDF.apply(is_increasing, axis=1)
-print("Percent of increasing values: ", round(radioCarbonDF["isIncreasing"].mean(), 4))
-
-
-
-
-
+climateDF["isIncreasing"] = climateDF.apply(is_increasing, axis=1)
+print("Percent of increasing values: ", round(climateDF["isIncreasing"].mean(), 4))
