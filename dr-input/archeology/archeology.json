@@ -6,11 +6,6 @@
         "answer": "10195.4133"
     },
     {
-        "id": "archeology-hard-2",
-        "query": "Across the years, what was the percent of years the wet-dry index was increasing? Give your answer in percentage, round your answer to 2 decimal places.",
-        "answer": ""
-    },
-    {
         "id": "archeology-easy-3",
         "query": "What is the average rank of cities in Greece? Assume that if there is an 'or', the average of the two numbers. Round your answer to 4 decimal places.",
         "runtime": 1080,
