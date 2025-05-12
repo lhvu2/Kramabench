@@ -7,11 +7,10 @@ import subprocess
 from typeguard import typechecked
 from typing import Dict, List
 
-from systems.generator_util import Generator, OllamaGenerator
 from benchmark.benchmark_api import System
 from .baseline_prompts import QUESTION_PROMPT, QUESTION_PROMPT_NO_DATA
 from .baseline_utils import *
-from .generator_utils import Generator
+from .generator_utils import Generator, OllamaGenerator
 
 class BaselineLLMSystem(System):
     """
