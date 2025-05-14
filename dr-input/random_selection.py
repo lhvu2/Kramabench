@@ -33,17 +33,20 @@ for task_id in list(tasks.keys()):
         del tasks[task_id]["key_functionalities"]
 
 # Randomly select 6 tasks
-selected_tasks = np.random.choice(list(tasks.keys()), size=SAMPLE_SIZE, replace=False)
+# selected_tasks = np.random.choice(list(tasks.keys()), size=SAMPLE_SIZE, replace=False)
+already_done = ['astronomy-easy-1', 'astronomy-easy-3', 'astronomy-easy-6', 'astronomy-hard-3', 'astronomy-hard-4', 'astronomy-hard-5']
+
+selected_tasks = [x for x in list(tasks.keys()) if x not in already_done]
 
 # Create the output directory if it doesn't exist
 output_dir = f"dr-input/{domain}/"
 os.makedirs(output_dir, exist_ok=True)
 # remove all subfolders in dr-input/{domain}/
-for root, dirs, files in os.walk(output_dir):
-    for dir in dirs:
-        dir_path = os.path.join(root, dir)
-        if dir_path != output_dir:  # Avoid removing the main output directory
-            os.system(f"rm -rf {dir_path}")
+# for root, dirs, files in os.walk(output_dir):
+    # for dir in dirs:
+        # dir_path = os.path.join(root, dir)
+        # if dir_path != output_dir:  # Avoid removing the main output directory
+            # os.system(f"rm -rf {dir_path}")
 
 
 # Create a new JSON file with the selected tasks
