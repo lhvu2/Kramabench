@@ -140,6 +140,7 @@ class OllamaGenerator(Generator):
                     messages=messages,
                     format="json",
                     stream=False,
+                    options= {"num_ctx": 640000}
                 )
                 if not response["done"]:
                     logging.warning("WARNING - Conversation kept going! Maybe output is truncated.")
