@@ -125,6 +125,8 @@ def main():
         )
 
         print(f"Starting benchmark workflow on workload: {workload_name}")
+        if args.dataset_name not in workload_name:
+            raise Exception(f"Dataset name {args.dataset_name} not found in workload {workload_name}.")
         _, evaluation_results = benchmark.run_benchmark(
             dataset_directory=os.path.join(project_root_dir, f"data/{args.dataset_name}/input"),
             code_understanding_directory=os.path.join(project_root_dir, f"data/{args.dataset_name}/studies/understanding"),
