@@ -320,7 +320,7 @@
         "step": "Load NOAA monthly wildfire statistics CSV (skipping metadata rows) and NIFC wildfire summary TSV into dataframes.",
         "query": "Which datasets contain NOAA and NIFC wildfire data?",
         "answer": ["noaa_wildfires_monthly_stats.csv","nifc_wildfires.csv"],
-        "answer_type": "",
+        "answer_type": "list_exact",
         "data_sources": ["./"]
       },
       {
