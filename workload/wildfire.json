@@ -432,8 +432,8 @@
         "id": "wildfire-easy-8-3",
         "step": "Filter rows where 'acres' > 100 to focus on large fires. Group the filtered data by 'cause' and count the number of fires in each category",
         "query": "How many fires affecting more than 100 acres were reported for each cause? Expected answer: [[cause, number of fires], [cause, number of fires], ...]",
-        "answer": "list_exact",
-        "answer_type": [["H", 1691], ["L", 3593], ["N", 52], ["O", 4], ["U", 1310]],
+        "answer_type": "list_exact",
+        "answer": [["H", 1691], ["L", 3593], ["N", 52], ["O", 4], ["U", 1310]],
         "data_sources": [ "Fire_Weather_Data_2002-2014_2016.csv"]
       },
       {
