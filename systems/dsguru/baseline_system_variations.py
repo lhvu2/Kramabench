@@ -36,7 +36,7 @@ class BaselineLLMSystemGPT4oNaive(BaselineLLMSystem):
 class BaselineLLMSystemGPTo3FewShot(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
         super().__init__(
-            model="o3",
+            model="o3-2025-04-16",
             name="BaselineLLMSystemGPTo3FewShot",
             variance="few_shot",
             verbose=verbose,
@@ -47,7 +47,7 @@ class BaselineLLMSystemGPTo3FewShot(BaselineLLMSystem):
 class BaselineLLMSystemGPTo3OneShot(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
         super().__init__(
-            model="o3",
+            model="o3-2025-04-16",
             name="BaselineLLMSystemGPTo3OneShot",
             variance="one_shot",
             verbose=verbose,
@@ -58,11 +58,44 @@ class BaselineLLMSystemGPTo3OneShot(BaselineLLMSystem):
 class BaselineLLMSystemGPTo3Naive(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
         super().__init__(
-            model="o3",
+            model="o3-2025-04-16",
             name="BaselineLLMSystemGPTo3Naive",
+            variance="no_context",
+            verbose=verbose,
+            supply_data_snippet=True,
+            *args, **kwargs
+        )
+
+class BaselineLLMSystemClaude35FewShot(BaselineLLMSystem):
+    def __init__(self, verbose=False, *args, **kwargs):
+        super().__init__(
+            model="claude-3-5-sonnet-latest",
+            name="BaselineLLMSystemClaude35FewShot",
+            variance="few_shot",
+            verbose=verbose,
+            supply_data_snippet=True,
+            *args, **kwargs
+        )
+
+class BaselineLLMSystemClaude35OneShot(BaselineLLMSystem):
+    def __init__(self, verbose=False, *args, **kwargs):
+        super().__init__(
+            model="claude-3-5-sonnet-latest",
+            name="BaselineLLMSystemClaude35OneShot",
             variance="one_shot",
             verbose=verbose,
-            supply_data_snippet=False,
+            supply_data_snippet=True,
+            *args, **kwargs
+        )
+
+class BaselineLLMSystemClaude35Naive(BaselineLLMSystem):
+    def __init__(self, verbose=False, *args, **kwargs):
+        super().__init__(
+            model="claude-3-5-sonnet-latest",
+            name="BaselineLLMSystemClaude35Naive",
+            variance="no_context",
+            verbose=verbose,
+            supply_data_snippet=True,
             *args, **kwargs
         )
 
@@ -173,9 +206,9 @@ class BaselineLLMSystemDeepseekCoderNaive(BaselineLLMSystemOllama):
                          *args, **kwargs)
 
 
-class BaselineLLMSystemGemma3FewShot(BaselineLLMSystemOllama):
+class BaselineLLMSystemGemma3FewShot(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
-        super().__init__(model="gemma3:27b-it-qat", 
+        super().__init__(model="google/gemma-3-27b-it", 
                          name="BaselineLLMSystemGemma3FewShot", 
                          variance="few_shot", 
                          supply_data_snippet=True, 
@@ -183,9 +216,9 @@ class BaselineLLMSystemGemma3FewShot(BaselineLLMSystemOllama):
                          *args, 
                          **kwargs)
 
-class BaselineLLMSystemGemma3OneShot(BaselineLLMSystemOllama):
+class BaselineLLMSystemGemma3OneShot(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
-        super().__init__(model="gemma3:27b-it-qat", 
+        super().__init__(model="google/gemma-3-27b-it", 
                          name="BaselineLLMSystemGemma3OneShot", 
                          variance="one_shot", 
                          verbose=verbose, 
@@ -193,9 +226,9 @@ class BaselineLLMSystemGemma3OneShot(BaselineLLMSystemOllama):
                          *args, 
                          **kwargs)
 
-class BaselineLLMSystemGemma3Naive(BaselineLLMSystemOllama):
+class BaselineLLMSystemGemma3Naive(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
-        super().__init__(model="gemma3:27b-it-qat", 
+        super().__init__(model="google/gemma-3-27b-it", 
                          name="BaselineLLMSystemGemma3Naive", 
                          variance="one_shot", 
                          verbose=verbose, 
