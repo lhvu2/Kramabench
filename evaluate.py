@@ -1,5 +1,4 @@
 import argparse
-import csv
 import datetime
 import json
 import numpy as np
@@ -88,6 +87,7 @@ def main():
     parser.add_argument("--use_system_cache", action="store_true", default=False, help="Use cached system outputs if available.")
     parser.add_argument("--use_evaluation_cache", action="store_true", default=False, help="Use cached per-task evaluations if available.")
     parser.add_argument("--cache_system_output", action="store_true", default=True, help="Cache system output.")
+    parser.add_argument("--use_deepresearch_subset", action="store_true", default=False, help="Whether to use the subset of files from deepresearch experiments.")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose logging.")
     parser.add_argument("--skip_subtasks", action="store_true", default=False, help="Skips subtasks.")
     args = parser.parse_args()
@@ -122,13 +122,17 @@ def main():
             cache_system_output=args.cache_system_output,
             verbose=verbose,
             skip_subtasks=args.skip_subtasks,
+            use_deepresearch_subset = args.use_deepresearch_subset
         )
 
         print(f"Starting benchmark workflow on workload: {workload_name}")
         if args.dataset_name not in workload_name:
             raise Exception(f"Dataset name {args.dataset_name} not found in workload {workload_name}.")
+
+        dataset_directory = os.path.join(project_root_dir, f"data/{args.dataset_name}/input")
+
         _, evaluation_results = benchmark.run_benchmark(
-            dataset_directory=os.path.join(project_root_dir, f"data/{args.dataset_name}/input"),
+            dataset_directory=dataset_directory,
             code_understanding_directory=os.path.join(project_root_dir, f"data/{args.dataset_name}/studies/understanding"),
             results_directory=system_result_dir,
             workload_path=workload_path,
@@ -177,7 +181,7 @@ def main():
 
     aggregated_df.to_csv(aggregated_results_path, index=False)
 
-    print(f"Done. Aggregated results:")
+    print("Done. Aggregated results:")
     print(aggregated_df[aggregated_df["workload"] == workload_name])
 
 
