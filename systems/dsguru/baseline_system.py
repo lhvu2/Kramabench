@@ -1,3 +1,4 @@
+import os
 import sys
 
 sys.path.append("./")
@@ -10,7 +11,7 @@ from typing import Dict, List
 
 from benchmark.benchmark_api import System
 from .baseline_prompts import QUESTION_PROMPT, QUESTION_PROMPT_NO_DATA
-from .baseline_utils import *
+from .baseline_utils import get_table_string, clean_nan, extract_code
 from .generator_utils import Generator, OllamaGenerator
 
 
@@ -71,19 +72,20 @@ class BaselineLLMSystem(System):
         if not os.path.exists(self.question_intermediate_dir):
             os.makedirs(self.question_intermediate_dir)
 
-    def get_input_data(self) -> str:
+    def get_input_data(self, filenames) -> str:
         """
         Get the input data from the data sources.
         Naively read the first 10 rows of each data source.
         :return: Data as a string
         """
         data_string = ""
-        for file_name, data in self.dataset.items():
+        for file_name in filenames:
+            data = self.dataset[file_name]
             if self.verbose:
                 print(f"{self.name}: Reading {file_name}...")
             data_string += f"\nFile name: {file_name}\n"
             data_string += f"Column data types: {data.dtypes}\n"
-            data_string += f"Table:\n"
+            data_string += "Table:\n"
             data_string += get_table_string(data, row_limit=100)
             data_string += "\n" + "=" * 20 + "\n"
         return data_string
@@ -120,21 +122,26 @@ class BaselineLLMSystem(System):
         """
         return prompt
 
-    def generate_prompt(self, query: str) -> str:
+    def generate_prompt(self, query: str, subset_files:List[str]=[]) -> str:
         """
         Generate a prompt for the LLM based on the question.
         :param query: str
+        :param subset_files: list of strings with filenames
         :return: Prompt string
         """
         # Generate the RAG plan
         # TODO: use process_dataset() to get the data
-        data = self.get_input_data()
-        file_names = list(
-            self.dataset.keys()
-        )  # get the file names from the dataset directory
-        file_paths = [
-            os.path.join(self.dataset_directory, file) for file in file_names
-        ]  # get the file paths
+        # get the file names from the dataset directory
+        if len(subset_files):
+            file_names = subset_files
+            for f in file_names:
+                assert f in self.dataset.keys(), f"File {f} is not in dataset!"
+        else:
+            file_names = list(self.dataset.keys())
+
+        data = self.get_input_data(file_names)
+
+        file_paths = [os.path.join(self.dataset_directory, file) for file in file_names]
 
         example_json = {
             "id": "main-task",
@@ -170,7 +177,7 @@ class BaselineLLMSystem(System):
             )
 
         # Save the prompt to a txt file
-        prompt_fp = os.path.join(self.question_output_dir, f"prompt.txt")
+        prompt_fp = os.path.join(self.question_output_dir, "prompt.txt")
         with open(prompt_fp, "w") as f:
             f.write(prompt)
         if self.verbose:
@@ -186,7 +193,7 @@ class BaselineLLMSystem(System):
         json_fp = ""
         code_fp = ""
         # Save the full response to a txt file
-        response_fp = os.path.join(self.question_output_dir, f"initial_response.txt")
+        response_fp = os.path.join(self.question_output_dir, "initial_response.txt")
         with open(response_fp, "w") as f:
             f.write(response)
         if self.verbose:
@@ -198,7 +205,7 @@ class BaselineLLMSystem(System):
             json_response = extract_code(response, pattern=r"```json(.*?)```")
             # print("Extracted JSON:", json_response)
             # Save the JSON response to a file
-            json_fp = os.path.join(self.question_output_dir, f"answer.json")
+            json_fp = os.path.join(self.question_output_dir, "answer.json")
             with open(json_fp, "w") as f:
                 f.write(json_response)
             if self.verbose:
@@ -346,14 +353,14 @@ class BaselineLLMSystem(System):
         return overall_answer
 
     @typechecked
-    def run_one_shot(self, query: str, query_id: str) -> Dict[str, str | Dict | List]:
+    def run_one_shot(self, query: str, query_id: str, subset_files:List[str]=[]) -> Dict[str, str | Dict | List]:
         """
         This function demonstrates a simple one-shot LLM approach to solve the LLMDS benchmark.
         """
         self._init_output_dir(query_id)
 
         # Generate the prompt
-        prompt = self.generate_prompt(query)
+        prompt = self.generate_prompt(query, subset_files)
         if self.debug:
             print(f"{self.name}: Prompt:", prompt)
 
@@ -386,14 +393,14 @@ class BaselineLLMSystem(System):
         return output_dict
 
     @typechecked
-    def run_few_shot(self, query: str, query_id: str) -> Dict[str, str | Dict | List]:
+    def run_few_shot(self, query: str, query_id: str, subset_files:List[str]=[]) -> Dict[str, str | Dict | List]:
         """
         This function demonstrates a simple few-shot LLM approach to solve the LLMDS benchmark.
         """
         self._init_output_dir(query_id)
 
         # Generate the prompt
-        prompt = self.generate_prompt(query)
+        prompt = self.generate_prompt(query, subset_files)
         if self.debug:
             print(f"{self.name}: Prompt:", prompt)
 
@@ -468,19 +475,20 @@ class BaselineLLMSystem(System):
                     )
 
     @typechecked
-    def serve_query(self, query: str, query_id: str = "default_name-0") -> Dict:
+    def serve_query(self, query: str, query_id: str = "default_name-0", subset_files:List[str]=[]) -> Dict:
         """
         Serve a query using the LLM.
         The query should be in natural language, and the response can be in either natural language or JSON format.
         :param query: str
         :param query_id: str
+        :param subset_files: list of strings with filenames to include in the experiments
         :return: output_dict {"explanation": answer, "pipeline_code": pipeline_code}
         """
         # TODO: Implement the logic to handle different types of queries
         if self.variance == "one_shot":
-            output_dict = self.run_one_shot(query, query_id)
+            output_dict = self.run_one_shot(query, query_id, subset_files)
         elif self.variance == "few_shot":
-            output_dict = self.run_few_shot(query, query_id)
+            output_dict = self.run_few_shot(query, query_id, subset_files)
         return output_dict
 
 
@@ -525,7 +533,7 @@ def main():
     for question in questions:
         print(f"Processing question: {question['id']}")
         # For debugging purposes, also input question.id
-        response = baseline_llm.serve_query(question["query"], question["id"])
+        baseline_llm.serve_query(question["query"], question["id"])
 
 
 if __name__ == "__main__":
