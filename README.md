@@ -106,6 +106,16 @@ results/aggregated_results.csv                      # one-row-per-domain summary
 
 ---
 
+## Dataset availability
+The dataset can be also found on HuggingFace at [this link](https://huggingface.co/datasets/eugenie-y/KramaBench)
+To use it in your scripts run 
+```
+from datasets import load_dataset
+
+kramabench = load_dataset("eugenie-y/kramabench")
+```
+
+
 ## Writing your own System Under Test (SUT)
 
 1. **Implement a Python class** that, given
