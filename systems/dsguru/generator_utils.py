@@ -116,6 +116,8 @@ class Generator:
         else:
             try:
                 res = result.choices[0].message.content
+                total_tokens = result.usage.total_tokens
+                res = f"{res}\n\n{self.TOK_TAG}{total_tokens}]"
             except Exception as e:
                 print("Error:", e)
                 res = ""

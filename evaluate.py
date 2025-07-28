@@ -78,7 +78,7 @@ def aggregate_results(system_name, results_df):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sut", type=str, default="BaselineLLMSystemGPTo3FewShot", help="The system under test.")
+    parser.add_argument("--sut", type=str, default="BaselineLLMSystemGPTo3FewShot_10Tries", help="The system under test.")
     parser.add_argument("--dataset_name", type=str, default="legal", help="Name of dataset.")
     parser.add_argument("--workload_filename", type=str, default="legal-tiny.json", help="Name of workload JSON file.")
     parser.add_argument("--result_directory", type=str, default="results", help="Directory to store benchmark results.")

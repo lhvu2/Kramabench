@@ -95,7 +95,7 @@ class BaselineLLMSystem(System):
             data_string += "\n" + "=" * 20 + "\n"
         return data_string
 
-    def parse_token_used(generated: str) -> tuple[str, int | None]:
+    def parse_token_used(self, generated: str) -> tuple[str, int | None]:
         """
         Split the generator output into (clean_text, token_count).
 
@@ -228,7 +228,7 @@ class BaselineLLMSystem(System):
         if self.verbose:
             print(f"{self.name}: Response token count: {token_count}")
         # Save the token count to a file
-        token_fp = os.path.join(self.question_output_dir, "token_count.txt")
+        token_fp = os.path.join(self.question_output_dir, "_intermediate", f"token_count-{try_number}.txt")
         with open(token_fp, "w") as f:
             f.write(str(token_count))
 
