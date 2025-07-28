@@ -225,7 +225,7 @@ class Evaluator:
         return (score, token_usage)
 
     @typechecked
-    def _evaluate_result_for_task(self, response: Dict[str, Any], task: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], int, int, int]:
+    def _evaluate_result_for_task(self, response: Dict[str, Any], task: Dict[str, Any], evaluate_pipeline=True) -> Tuple[List[Dict[str, Any]], int, int, int]:
         """
         Evaluate results on all applicable metrics as specified in the task fixture for a 
         task in the workload.
@@ -238,28 +238,27 @@ class Evaluator:
         evaluation_result["runtime"] = response.get("combined_runtime",0)
         total_token_usage_answers = 0
         for metric in target_metrics:
-            score, token_usage = self.evaluate_response_with_metric(task["id"], response["model_output"], task["answer"], metric)
+            score, token_usage = self.evaluate_response_with_metric(task["id"], 
+                                                                    response["model_output"], 
+                                                                    task["answer"], 
+                                                                    metric)
             evaluation_result[metric] = score
             total_token_usage_answers += token_usage
 
         total_token_usage_pipeline = 0
-        code_eval_list = []
-        try:
-            code_eval_list, total_token_usage_pipeline = self.pipeline_evaluation_engine.evaluate_data_pipeline(
-                sut_generated_pipeline=response["code"],
-                task=task
-            )
-        except Exception as e:
-            logging.error(f"Evaluator._evaluate_result_for_task: {e} while calling LLM evaluator on code.")
-        evaluation_result["llm_code_eval"] = code_eval_list
+        if evaluate_pipeline:
+            code_eval_list = []
+            code_eval_list, total_token_usage_pipeline = self.pipeline_evaluation_engine.evaluate_data_pipeline(sut_generated_pipeline=response["code"],task=task)
+            evaluation_result["llm_code_eval"] = code_eval_list
 
         all_evaluation_results.append(evaluation_result)
         total_token_usage_subtasks = 0
         if "subtasks" in task and self.run_subtasks:
+            assert "subresponses" in response, "Subresponses should be present if subtasks are run! Please run the evaluation with run_subtasks=True."
             for i, subtask in enumerate(task["subtasks"]):
-                subtask_result, token_usage = self._evaluate_result_for_task(response["subresponses"][i], subtask)
+                subtask_result, token_usage, pipeline_usage, total_subtask_usage = self._evaluate_result_for_task(response["subresponses"][i], subtask, evaluate_pipeline=False)
                 all_evaluation_results.extend(subtask_result)
-                total_token_usage_subtasks += token_usage
+                total_token_usage_subtasks += token_usage + pipeline_usage + total_subtask_usage
         return (all_evaluation_results, total_token_usage_answers, total_token_usage_pipeline, total_token_usage_subtasks)
 
     def evaluate_results(self, responses: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
