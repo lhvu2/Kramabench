@@ -12,12 +12,6 @@ from .prompts import PARAPHRASE_INSTRUCTION_PROMPT, CODE_UNDERSTANDING_PROMPT, S
 
 logging.basicConfig(level=logging.ERROR)
 
-
-# TODO: remove this from public release
-# Make sure to run the following ssh tunnel command before running the code:
-# ssh -L 11434:localhost:11434 -p 54245 gerardo@dsg-mcgraw.csail.mit.edu
-# ssh -N -L 11434:localhost:11434 -p 54245 gerardo@xango && mosh xango
-
 # https://github.com/ollama/ollama/blob/main/docs/linux.md
 class OllamaInterface(LLMInterface):
     """
