@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import List
+from typing import Generic, List, Tuple, TypeVar
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -14,13 +14,15 @@ def str_to_float(num_string: str) -> float:
         return float(num_string.strip("%")) / 100
     return float(num_string)
 
-class Metric:
+P = TypeVar('P')
+T = TypeVar('T')
+class Metric(Generic[P,T]):
     name = "Metric"
 
     def __init__(self, *args, **kwargs):
         pass
 
-    def __call__(self, predicted: List[str] | float | int | str, target: List[str] | float | int | str) -> float:
+    def __call__(self, predicted: P, target: T) -> Tuple[float | None, int]:
         raise NotImplementedError("Metric must implement __call__ method!")
 
 
@@ -79,7 +81,7 @@ class F1(Metric):
                 target = json.loads(target)
             
             if len(target) == 0:
-                return float(len(predicted) == 0)
+                return (float(len(predicted) == 0), 0)
             
             matched_predicted = set() # Avoids extra LLM calls
             # Calculate the recall
@@ -117,6 +119,7 @@ class F1Approximate(Metric):
     name = "f1_approximate"
 
     def __call__(self, predicted: List[str | float | int], target: List[str | float| int] | str):
+        total_token_usage = 0
         try: 
             if isinstance(predicted, list) and isinstance(target, str):
                 target = json.loads(target)
@@ -270,6 +273,8 @@ class StringBootstrap(Metric):
             target: target string
         """
         llm_paraphrase, token_usage = LLMParaphrase()(predicted, target)
+        if llm_paraphrase is None:
+            return (0, token_usage)
         if int(llm_paraphrase) > 0:
             return (1.0, token_usage)
         bleu, _ = BleuScore()(predicted, target)
@@ -288,9 +293,11 @@ class Success(Metric):
                 if isinstance(predicted, str):
                     predicted = str_to_float(predicted)
                 rea = abs(predicted - target) / abs(target)
-                return rea < 0.000001
-            elif isinstance(target, str):
+                return (rea < 0.000001, 0)
+            elif isinstance(target, str) and isinstance(predicted, str):
                 return (int(predicted.strip().lower() == target.strip().lower()), 0)
+            elif isinstance(target, str) and (isinstance(predicted, float) or isinstance(predicted, int)):
+                raise ValueError("TypeError: Success Metric: unsupported argument types!")
             else:
                 return (int(predicted == target), 0)
         except Exception as e:
