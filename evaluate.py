@@ -26,6 +26,7 @@ def aggregate_results(system_name, results_df):
                 "metric": metric,
                 "value_mean": mean,
                 "value_std": std,
+                "value_sum": group_dropped_na["value"].sum(),
                 "value_support": len(group_dropped_na),
                 "total_value_support": len(group)
             })
@@ -44,6 +45,7 @@ def aggregate_results(system_name, results_df):
                 "metric": metric,
                 "value_mean": np.mean(values),
                 "value_std": np.std(values),
+                "value_sum": sum(values),
                 "value_support": value_support,
                 "total_value_support": len(group)
             })
