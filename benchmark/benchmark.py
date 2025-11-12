@@ -79,7 +79,7 @@ class Executor:
         response["task_id"] = task["id"]
         response["model_output"] = model_output
         response["code"] = code_string
-        response["sut_token_usage"] = token_usage
+        response["token_usage_sut"] = token_usage
         if "subtasks" in task and self.run_subtasks:
             response["subresponses"] = []
             for subtask in task["subtasks"]:

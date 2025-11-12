@@ -6,6 +6,7 @@ import logging
 
 import os
 import time
+from benchmark.benchmark_utils import print_error, print_info
 import ollama
 import anthropic
 from openai import OpenAI
@@ -31,7 +32,6 @@ def get_api_key(key: str) -> str:
 import re
 
 class Generator:
-    TOK_TAG = "[TOKENS_USED:"  # sentinel to make parsing easy
 
     def __init__(self, model: str, verbose: bool = False):
         self.model = model
@@ -45,50 +45,9 @@ class Generator:
             raise ValueError(f"Unsupported model: {model}")
         self.verbose = verbose
 
-    def generate(self, prompt: str) -> str:
-        if self.verbose:
-            print(f"Generating with {self.model}")
-            print(f"Prompt: {prompt}")
-
-        # Updated this function to record the number of tokens used in the response
-        # TODO: Handle Claude models
-        # --- OpenAI ---
-        if isinstance(self.client, OpenAI):
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=4000,
-            )
-            content = response.choices[0].message.content
-            total_tokens = response.usage.total_tokens
-
-        # --- Together ---
-        elif isinstance(self.client, Together):
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=4000,
-            )
-            content = response.choices[0].message.content
-            total_tokens = response.usage.total_tokens
-        # --- Claude ---
-        elif isinstance(self.client, anthropic.Anthropic):
-            response = self.client.messages.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}], # temperature is 0 by default
-                max_tokens=4000,
-            )
-            return response.content[0].text
-        else:
-            raise RuntimeError(f"Unsupported client type: {type(self.client)}")
-
-        # Append the token tag on its own line so normal consumers ignore it
-        return f"{content}\n\n{self.TOK_TAG}{total_tokens}]"
-
-
     # GV: This function is the call_gpt function from the baseline_utils.py file. But for Ollama we substitute it
     def __call__(self, messages):
-    
+        self.total_tokens = 0
         max_retries = 5
         retry_count = 0
         fatal = False
@@ -96,35 +55,32 @@ class Generator:
         while retry_count < max_retries:
             try:
                 if self.model in ClaudeModelList:
-                    claude_messages = []
-                    for msg in messages:
-                        if msg['role'] == 'user':
-                            claude_messages.append({"role": "user", "content": msg['content']})
-                        elif msg['role'] == 'assistant':
-                            claude_messages.append({"role": "assistant", "content": msg['content']})
-                        # skip system messages
-                    messages = claude_messages
+                    # skip system messages
+                    claude_messages = [m for m in messages if m['role'] in ['user', 'assistant']]
                     result = self.client.messages.create(
                         model=self.model,
-                        messages=messages,
+                        messages=claude_messages,
                         max_tokens=4000,
                     )
+                    input_tokens = result.usage.input_tokens
+                    output_tokens = result.usage.output_tokens
+                    self.total_tokens += input_tokens + output_tokens
                 else:
                     result = self.client.chat.completions.create(
                         model=self.model,
                         messages=messages,
                     )
-                
+                    self.total_tokens += result.usage.total_tokens
                 break # break out of while loop if no error
             
             except Exception as e:
-                print(f"An error occurred: {e}.")
+                print_error(f"An error occurred: {e}.")
                 if "context_length_exceeded" in f"{e}" or "too long" in f"{e}":
                     fatal = True
                     fatal_reason = f"{e}"
                     break
                 else:
-                    print("Retrying...")
+                    print_info("Retrying...")
                     retry_count += 1
                     time.sleep(10 * retry_count)  # Wait 
         
@@ -138,13 +94,8 @@ class Generator:
             try:
                 if self.model in ClaudeModelList:
                     res = result.content[0].text
-                    input_tokens = result.usage.input_tokens
-                    output_tokens = result.usage.output_tokens
-                    total_tokens = input_tokens + output_tokens
                 else: 
                     res = result.choices[0].message.content
-                    total_tokens = result.usage.total_tokens
-                res = f"{res}\n\n{self.TOK_TAG}{total_tokens}]"
             except Exception as e:
                 print("Error:", e)
                 res = ""
@@ -177,8 +128,8 @@ class OllamaGenerator(Generator):
         retry_count = 0
         fatal = False
         fatal_reason = None
+        self.total_tokens = 0
         while retry_count < max_retries:
-
             try:
                 response = self.client.chat(
                     model=self.model,
@@ -187,6 +138,7 @@ class OllamaGenerator(Generator):
                     stream=False,
                     options= {"num_ctx": 640000}
                 )
+                self.total_tokens += response["usage"]["total_tokens"]
                 if not response["done"]:
                     logging.warning("WARNING - Conversation kept going! Maybe output is truncated.")
                 break

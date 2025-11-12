@@ -83,22 +83,6 @@ class BaselineLLMSystem(System):
             data_string += "\n" + "=" * 20 + "\n"
         return data_string
 
-    def parse_token_used(self, generated: str) -> tuple[str, int | None]:
-        """
-        Split the generator output into (clean_text, token_count).
-
-        If the token tag is missing or malformed, token_count is None.
-        """
-        # Look for the sentinel at the end
-        m = re.search(r"\[TOKENS_USED:(\d+)]\s*$", generated)
-        if not m:
-            return generated, None
-
-        tokens = int(m.group(1))
-        # Strip the sentinel (and any trailing whitespace/newlines)
-        text = generated[: m.start()].rstrip()
-        return text, tokens
-
     def generate_error_handling_prompt(
         self, code_fp: str, error_fp: str, output_fp: str
     ) -> str:
@@ -207,15 +191,6 @@ class BaselineLLMSystem(System):
             f.write(response)
         if self.verbose:
             print_warning(f"{self.name}: Response saved to {response_fp}")
-
-        # Parse token count and clean the response
-        response, token_count = self.parse_token_used(response)
-        if self.verbose:
-            print_warning(f"{self.name}: Response token count: {token_count}")
-        # Save the token count to a file
-        token_fp = os.path.join(self.question_output_dir, "_intermediate", f"token_count-{try_number}.txt")
-        with open(token_fp, "w") as f:
-            f.write(str(token_count))
 
         # Assume the step-by-step plan is fixed after the first try
         if try_number == 0:
@@ -393,9 +368,16 @@ class BaselineLLMSystem(System):
 
         # Process the response
         json_fp, code_fp = self.extract_response(response, try_number=0)
-
         # Execute the code (if necessary)
         output_fp, error_fp = self.execute_code(code_fp, try_number=0)
+
+        token_count = self.llm.total_tokens
+        if self.verbose:
+            print_warning(f"{self.name}: Response token count: {token_count}")
+        # Save the token count to a file
+        token_fp = os.path.join(self.question_output_dir, "_intermediate", f"token_count-0.txt")
+        with open(token_fp, "w") as f:
+            f.write(str(token_count))
 
         answer = None
         pipeline_code = None
@@ -406,7 +388,7 @@ class BaselineLLMSystem(System):
 
         # Fill in JSON response with the execution result
         answer = self.process_response(json_fp, output_fp, error_fp)
-        output_dict = {"explanation": answer, "pipeline_code": pipeline_code}
+        output_dict = {"explanation": answer, "pipeline_code": pipeline_code, "token_usage": token_count}
 
         return output_dict
 
@@ -429,6 +411,7 @@ class BaselineLLMSystem(System):
         answer = None
         pipeline_code = None
 
+        total_token_usage = 0
         for try_number in range(self.max_tries):
             messages.append({"role": "user", "content": prompt})
             # Get the model's response
@@ -442,6 +425,16 @@ class BaselineLLMSystem(System):
                 json_fp, code_fp = self.extract_response(response, try_number)
             else:
                 _, code_fp = self.extract_response(response, try_number)
+
+            # Parse token count and clean the response
+            token_count = self.llm.total_tokens
+            total_token_usage += token_count
+            if self.verbose:
+                print_warning(f"{self.name}: Response token count: {token_count}")
+            # Save the token count to a file
+            token_fp = os.path.join(self.question_output_dir, "_intermediate", f"token_count-{try_number}.txt")
+            with open(token_fp, "w") as f:
+                f.write(str(token_count))
 
             # Execute the code (if necessary)
             output_fp, error_fp = self.execute_code(code_fp, try_number)
@@ -466,6 +459,7 @@ class BaselineLLMSystem(System):
                 "answer": f"Pipeline not successful after {self.max_tries} tries.",
             }
             output_dict = {"explanation": answer, "pipeline_code": ""}
+        output_dict["token_usage"] = total_token_usage
         return output_dict
 
     def process_dataset(self, dataset_directory: str | os.PathLike) -> None:
