@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import List
+from typing import Generic, List, Tuple, TypeVar
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -14,13 +14,15 @@ def str_to_float(num_string: str) -> float:
         return float(num_string.strip("%")) / 100
     return float(num_string)
 
-class Metric:
+P = TypeVar('P')
+T = TypeVar('T')
+class Metric(Generic[P,T]):
     name = "Metric"
 
     def __init__(self, *args, **kwargs):
         pass
 
-    def __call__(self, predicted: List[str] | float | int | str, target: List[str] | float | int | str) -> float:
+    def __call__(self, predicted: P, target: T) -> Tuple[float | None, int]:
         raise NotImplementedError("Metric must implement __call__ method!")
 
 
@@ -79,7 +81,7 @@ class F1(Metric):
                 target = json.loads(target)
             
             if len(target) == 0:
-                return float(len(predicted) == 0)
+                return (float(len(predicted) == 0), 0)
             
             matched_predicted = set() # Avoids extra LLM calls
             # Calculate the recall
@@ -110,13 +112,14 @@ class F1(Metric):
             f1 = 2 * precision * recall / (precision + recall)
             return (f1, 0)
         except Exception as e:
-            logging.error(f"F1 Metric: {e}")
+            logging.warning(f"F1Approximate Metric defaults to 0 because of following exception: {e}")
             return (0.0, 0)
 
 class F1Approximate(Metric):
     name = "f1_approximate"
 
     def __call__(self, predicted: List[str | float | int], target: List[str | float| int] | str):
+        total_token_usage = 0
         try: 
             if isinstance(predicted, list) and isinstance(target, str):
                 target = json.loads(target)
@@ -163,7 +166,7 @@ class F1Approximate(Metric):
             f1 = 2 * precision * recall / (precision + recall)
             return (f1, total_token_usage)
         except Exception as e:
-            logging.error(f"F1Approximate Metric: {e}")
+            logging.warning(f"F1Approximate Metric defaults to 0 because of following exception: {e}")
             return (0.0, total_token_usage)
 
 class MeanSquaredError(Metric):
@@ -178,7 +181,7 @@ class MeanSquaredError(Metric):
                 target = str_to_float(target)
             return ((predicted - target) * (predicted - target), 0)
         except Exception as e:
-            logging.error(f"MeanSquared Error Metric: {e}")
+            logging.warning(f"MeanSquaredError Metric defaults to None because of following exception: {e}")
             return (None, 0)
     
 class MeanAbsoluteError(Metric):
@@ -193,7 +196,7 @@ class MeanAbsoluteError(Metric):
                 target = str_to_float(target)
             return (abs(predicted - target), 0)
         except Exception as e:
-            logging.error(f"MeanAbsoluteError Metric: {e}")
+            logging.warning(f"MeanAbsoluteError Metric defaults to None because of following exception: {e}")
             return (None, 0)
 
 class MeanRelativeAbsoluteError(Metric):
@@ -209,7 +212,7 @@ class MeanRelativeAbsoluteError(Metric):
                 target = str_to_float(target)
             return (abs(predicted - target) / abs(target), 0)
         except Exception as e:
-            logging.error(f"MeanRelativeAbsoluteError Metric: {e}")
+            logging.warning(f"MeanRelativeAbsoluteError Metric defaults to 9999.0 because of following exception: {e}")
             return (9999.0, 0)
 
 class RAEScore(Metric):
@@ -225,15 +228,16 @@ class RAEScore(Metric):
             rae = abs(predicted - target) / abs(target)
             return (1/(1+rae), 0)
         except Exception as e:
-            logging.error(f"RAEScore Metric: {e}")
-            return (9999.0, 0)
+            logging.warning(f"RAEScore Metric defaults to 0 because of following exception: {e}")
+            return (0.0, 0)
 
 
 class BleuScore(Metric):
     name = "bleu"
 
     def __call__(self, predicted: str, target: str):
-        BLEUscore = nltk.translate.bleu_score.sentence_bleu([target], predicted)
+        cc = nltk.translate.bleu_score.SmoothingFunction()
+        BLEUscore = nltk.translate.bleu_score.sentence_bleu([target], predicted, smoothing_function=cc.method1)
         return (BLEUscore, 0)
 
 
@@ -260,6 +264,25 @@ class LLMParaphrase(Metric):
             return (int(is_paraphrase), token_usage)
         return (None, token_usage)
 
+class StringBootstrap(Metric):
+    name = "string_bootstrap"
+
+    def __call__(self, predicted: str, target: str):
+        """ arguments:
+            predicted: predicted string
+            target: target string
+        """
+        llm_paraphrase, token_usage = LLMParaphrase()(predicted, target)
+        if llm_paraphrase is None:
+            return (0, token_usage)
+        if int(llm_paraphrase) > 0:
+            return (1.0, token_usage)
+        bleu, _ = BleuScore()(predicted, target)
+        if bleu > 0.2:
+            rouge, _ = RougeScore()(predicted, target)
+            return (rouge, token_usage)
+        return (0.0, token_usage)
+
 
 class Success(Metric):
     name = "success"
@@ -270,13 +293,15 @@ class Success(Metric):
                 if isinstance(predicted, str):
                     predicted = str_to_float(predicted)
                 rea = abs(predicted - target) / abs(target)
-                return rea < 0.000001
-            elif isinstance(target, str):
+                return (rea < 0.000001, 0)
+            elif isinstance(target, str) and isinstance(predicted, str):
                 return (int(predicted.strip().lower() == target.strip().lower()), 0)
+            elif isinstance(target, str) and (isinstance(predicted, float) or isinstance(predicted, int)):
+                raise ValueError("TypeError: Success Metric: unsupported argument types!")
             else:
                 return (int(predicted == target), 0)
         except Exception as e:
-            logging.error(f"Success Metric: {e}")
+            logging.warning(f"Success Metric defaults to 0 because of following exception: {e}")
         return (0, 0)
 
 def metric_factory(metric_name: str):
@@ -287,6 +312,7 @@ def metric_factory(metric_name: str):
         "f1_approximate": F1Approximate,
         "bleu": BleuScore,
         "rouge": RougeScore,
+        "string_bootstrap": StringBootstrap,
         "llm_paraphrase": LLMParaphrase,
         "success": Success,
         "mean_squared_error": MeanSquaredError,

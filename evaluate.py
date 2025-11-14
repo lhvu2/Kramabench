@@ -11,39 +11,22 @@ from benchmark import Benchmark
 def aggregate_results(system_name, results_df):
     # Aggregate metrics
     print("Aggregating results...")
-    results_df_additional = pd.DataFrame(columns=results_df.columns)
     workload_results = []
-    for (workload, task_id), group in results_df.groupby(["workload", "task_id"]):
-        group_dropped_na = group.dropna()
-        if len(group[group["metric"] == "bleu"]) > 0:
-            bleu = group[group["metric"] == "bleu"]["value"].values[0]
-            rouge = group[group["metric"] == "rouge"]["value"].values[0]
-            sut = group[group["metric"] == "rouge"]["sut"].values[0]
-            llm_paraphrase = group[group["metric"] == "llm_paraphrase"]["value"].values[0]
-            score = 0
-            if int(llm_paraphrase) > 0:
-                score = 1
-            elif bleu > 0.2:
-                score = rouge
-            results_df_additional.loc[len(results_df_additional)] = [sut, workload, task_id, "string_bootstrap", score]
-        elif len(group[group["metric"] == "mean_relative_absolute_error"]) > 0:
-            rae = group[group["metric"] == "mean_relative_absolute_error"]["value"].values[0]
-            sut = group[group["metric"] == "mean_relative_absolute_error"]["sut"].values[0]
-            results_df_additional.loc[len(results_df_additional)] = [sut, workload, task_id, "rae_score", 1 / (1+rae)]
-    
-    results_concat_df = pd.concat([results_df, results_df_additional], ignore_index=True)
 
-    for (workload, metric), group in results_concat_df.groupby(["workload", "metric"]):
+    for (workload, metric), group in results_df.groupby(["workload", "metric"]):
+        if metric in ['code', 'model_output']:
+            continue
         group_dropped_na = group.dropna()
         if metric != "llm_code_eval":
             mean = group_dropped_na["value"].mean()
             std = group_dropped_na["value"].std() if len(group_dropped_na) > 1 else 0
             workload_results.append({
                 "sut": system_name,
-                "workload": workload,
+                "workload": f"{workload}.json",
                 "metric": metric,
                 "value_mean": mean,
                 "value_std": std,
+                "value_sum": group_dropped_na["value"].sum(),
                 "value_support": len(group_dropped_na),
                 "total_value_support": len(group)
             })
@@ -58,10 +41,11 @@ def aggregate_results(system_name, results_df):
                     value_support += 1
             workload_results.append({
                 "sut": system_name,
-                "workload": workload,
+                "workload": f"{workload}.json",
                 "metric": metric,
                 "value_mean": np.mean(values),
                 "value_std": np.std(values),
+                "value_sum": sum(values),
                 "value_support": value_support,
                 "total_value_support": len(group)
             })
@@ -70,18 +54,17 @@ def aggregate_results(system_name, results_df):
     total_support = 0
     total_score = 0
     for _, row in workload_results_df.iterrows():
-        if row["metric"] in ["f1", "string_bootstrap", "rae_score", "success"]:
+        if row["metric"] in ["success", "string_bootstrap", "rae_score", "f1", "f1_approximate"]:
             total_support += row["total_value_support"]
             total_score += row["value_support"] * row["value_mean"]
-    print(f"Total score is: {total_score/total_support}")
+    print(f"Total score is: {total_score/total_support*100}")
     return workload_results_df
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sut", type=str, default="BaselineLLMSystemGPTo3FewShot", help="The system under test.")
-    parser.add_argument("--dataset_name", type=str, default="legal", help="Name of dataset. Default: legal")
-    parser.add_argument("--workload_filename", type=str, default="legal-tiny.json", help="Name of workload JSON file. Default: legal-tiny.json")
+    parser.add_argument("--workload", type=str, default="legal", help="Name of workload to benchmark. Default: legal")
     parser.add_argument("--result_directory", type=str, default="results", help="Directory to store benchmark results. Default: results")
     parser.add_argument("--task_fixtures", type=str, default="benchmark/fixtures", help="Directory containing task fixture files. Default: benchmark/fixtures")
     parser.add_argument("--project_root", type=str, default=os.getcwd(), help="Project root. Default: current working directory")
@@ -91,6 +74,7 @@ def main():
     parser.add_argument("--use_deepresearch_subset", action="store_true", default=False, help="Whether to use the subset of files from deepresearch experiments. Default: False")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose logging. Default: False")
     parser.add_argument("--run_subtasks", action="store_true", help="Run subtasks if set. Default: False")
+    parser.add_argument("--no_pipeline_eval", action="store_true", help="Skip pipeline design and implementation evaluation (which uses API calls). Default: True")
     args = parser.parse_args()
 
     system_name = args.sut
@@ -100,23 +84,28 @@ def main():
     result_root_dir = os.path.join(project_root_dir, args.result_directory)
 
     # Setup output (cache maintained by benchmark) and scratch directories for system under test
-    dataset_name = args.dataset_name
+    workload = args.workload
     system_result_dir = os.path.join(result_root_dir, system_name)
-    workload_filename = args.workload_filename
-    workload_name = os.path.basename(workload_filename)
-    workload_path = os.path.join(project_root_dir, f"workload/{workload_filename}")
+    workload_path = os.path.join(project_root_dir, f"workload/{workload}.json")
     system_output_dir = os.path.join(project_root_dir, f"system_scratch/{system_name}")
     os.makedirs(system_output_dir, exist_ok=True)
     os.makedirs(system_result_dir, exist_ok=True)
 
-    if dataset_name not in workload_name:
-        raise Exception(f"Dataset name {args.dataset_name} not found in workload {workload_name}.")
-
     # Setup benchmark evaluation util directory
     task_fixture_dir = os.path.join(project_root_dir, args.task_fixtures)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    measures_path = os.path.join(system_result_dir, f"{workload_name.split('.')[0]}_measures_{timestamp}.csv")
+    measures_path = os.path.join(system_result_dir, f"{workload}_measures_{timestamp}.csv")
     aggregated_results_path = os.path.join(result_root_dir, "aggregated_results.csv")
+    evaluate_pipeline = not args.no_pipeline_eval
+
+    print(f"Starting benchmark workflow on dataset: {workload}")
+    if "-tiny" in workload:
+        print("Using tiny workload for testing")
+        dataset_name = workload.replace("-tiny", "")
+        dataset_directory = os.path.join(project_root_dir, f"data/{dataset_name}/tiny")
+    else:
+        dataset_name = workload
+
     if not args.use_evaluation_cache:
         benchmark = Benchmark(
             system_name=system_name,
@@ -126,13 +115,14 @@ def main():
             cache_system_output=args.cache_system_output,
             verbose=verbose,
             run_subtasks=args.run_subtasks,
-            use_deepresearch_subset = args.use_deepresearch_subset
+            use_deepresearch_subset=args.use_deepresearch_subset,
+            evaluate_pipeline=evaluate_pipeline
         )
 
         print(f"Starting benchmark workflow on dataset: {dataset_name}")
-        dataset_directory = os.path.join(project_root_dir, f"data/{args.dataset_name}/input")
+        dataset_directory = os.path.join(project_root_dir, f"data/{dataset_name}/input")
 
-        _, evaluation_results = benchmark.run_benchmark(
+        evaluation_results = benchmark.run_benchmark(
             dataset_directory=dataset_directory,
             results_directory=system_result_dir,
             workload_path=workload_path,
@@ -145,14 +135,14 @@ def main():
             # TODO: Implement system planned subtask result evaluation
             task_id = task_result["task_id"]
             for metric, value in task_result.items():
-                if metric == "task_id":
+                if metric in ["task_id", "code", "model_output", "subresponses"]:
                     continue
                 parsed_value = value
                 if isinstance(value, list): # LLM code eval results, handle list
                     parsed_value = f"\"{json.dumps(value)}\""
                 flat_measures.append({
                     "sut": system_name,
-                    "workload": workload_name,
+                    "workload": workload,
                     "task_id": task_id,
                     "metric": metric,
                     "value": parsed_value
@@ -173,28 +163,32 @@ def main():
                 workload_timestamp = datetime.datetime.strptime(workload_timestamp, "%Y%m%d_%H%M%S")
                 if timestamp is None or workload_timestamp > timestamp:
                     measures_path = os.path.join(system_result_dir, filename)
+                    timestamp = workload_timestamp
 
         if not os.path.exists(measures_path):
             raise FileNotFoundError(f"Cached evaluation results not found at {measures_path}. Please run the benchmark without --use_evaluation_cache to generate them first!")
-        print(f"Using cached detailed evaluation results on workload {workload_name} from time: {workload_timestamp}")
+        print(f"Using cached detailed evaluation results on workload {workload} from time: {timestamp}")
         results_df = pd.read_csv(measures_path)
         converted_df = pd.to_numeric(results_df['value'], errors='coerce')
         results_df['value'] = converted_df.combine_first(results_df['value'])
 
-    aggregated_df = aggregate_results(system_name, results_df)
+        if not args.run_subtasks:
+            results_df = results_df[results_df['task_id'].apply(lambda x: x.count('-') < 3)]
+            results_df = results_df[results_df['metric'] != 'llm_code_eval']
 
+    aggregated_df = aggregate_results(system_name, results_df)
     # Update aggregated results file
     if os.path.exists(aggregated_results_path):
         old_aggregated_df = pd.read_csv(aggregated_results_path)
         old_aggregated_df = old_aggregated_df[
-            ~((old_aggregated_df["sut"] == system_name) & (old_aggregated_df["workload"] == workload_name))
+            ~((old_aggregated_df["sut"] == system_name) & (old_aggregated_df["workload"] == f"{workload}.json"))
         ]
         aggregated_df = pd.concat([old_aggregated_df, aggregated_df])
 
     aggregated_df.to_csv(aggregated_results_path, index=False)
 
-    print("Done. Aggregated results:")
-    print(aggregated_df[aggregated_df["workload"] == workload_name])
+    # print("Done. Aggregated results:")
+    # print(aggregated_df[aggregated_df["workload"] == workload_name])
 
 
 if __name__ == "__main__":
