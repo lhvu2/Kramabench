@@ -210,8 +210,9 @@ class GPTInterface(LLMInterface):
                 break
             json_answer = ans
         try:
-            result = (["yes" in ans_item.lower() for ans_item in json_answer], token_usage, token_usage_input, token_usage_output)
+            result = ([bool(str(ans_item).lower()) for ans_item in json_answer], token_usage, token_usage_input, token_usage_output)
         except Exception as e:
             print(json_answer)
-            raise e
+            logging.error(f"GPTInterface.evaluate_data_pipeline: ERROR {e}")
+            return (None, token_usage, token_usage_input, token_usage_output)
         return result
