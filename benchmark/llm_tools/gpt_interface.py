@@ -168,7 +168,7 @@ class GPTInterface(LLMInterface):
         return json_answer
     
     @typechecked
-    def evaluate_data_pipeline(self, sut_generated_pipeline: str, task: Dict) -> Tuple[List[bool], int, int, int]:
+    def evaluate_data_pipeline(self, sut_generated_pipeline: str, task: Dict) -> Tuple[List[bool] | None, int, int, int]:
         """
         On LLM induced error, return None. Caller takes care of error handling.
         """
