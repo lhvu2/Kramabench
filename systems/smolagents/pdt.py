@@ -19,7 +19,7 @@ import time
 
 from dotenv import load_dotenv
 from .text_inspector_tool import TextInspectorTool
-from .tools import list_input_filepaths, write_file
+from .tools import list_input_filepaths, write_file, get_csv_metadata, summarize_dataframe
 from .smolagents_utils import parse_token_counts
 
 from smolagents import (
@@ -204,7 +204,7 @@ class SmolagentsPDT(System):
         # === Subtask Decomposer Agent ===
         decomposer_agent = ToolCallingAgent(
             model=self.llm_reason,
-            tools=[],
+            tools=[list_input_filepaths, summarize_dataframe],
             max_steps=self.max_steps,
             verbosity_level=self.verbosity_level,
             logger=logger,
@@ -235,6 +235,7 @@ class SmolagentsPDT(System):
             tools=[
                 list_input_filepaths,
                 TextInspectorTool(self.llm_reason, self.text_limit),
+                write_file,
             ],
             max_steps=self.max_steps,
             verbosity_level=self.verbosity_level,
@@ -295,6 +296,7 @@ class SmolagentsPDT(System):
             - be as independent and concrete as possible,
             - be implementable by executing Python over the workload data,
             - have explicit dependencies.
+            - 5 is the MAX number of subtasks you can create. 
 
             STRICTLY output valid JSON with this schema and nothing else:
 
@@ -351,9 +353,6 @@ class SmolagentsPDT(System):
             Global user task:
             {task_prompt}
 
-            High-level PLAN from the planner_agent:
-            \"\"\"{high_level_plan}\"\"\"
-
             You are now executing Subtask {sid}.
 
             Subtask {sid} description:
@@ -388,7 +387,6 @@ class SmolagentsPDT(System):
         final_answer = subtask_outputs[last_id]
 
         return {
-            "high_level_plan": high_level_plan,
             "subtasks": subtasks,
             "subtask_outputs": subtask_outputs,
             "final_answer": final_answer,
@@ -470,8 +468,7 @@ class SmolagentsPDT(System):
                 "id": query_id,
                 "runtime": runtime,
                 "timeout": True,
-                "message": f"Query exceeded the 15-minute time limit (900 seconds).",
-                "high_level_plan": None,
+                "message": f"Query exceeded the 20-minute time limit (1200 seconds).",
                 "subtasks": None,
                 "subtask_outputs": None,
                 "explanation": {"id": "main-task", "answer": None},
@@ -490,7 +487,6 @@ class SmolagentsPDT(System):
                 "runtime": runtime,
                 "timeout": False,
                 "error": result_container["error"],
-                "high_level_plan": None,
                 "subtasks": None,
                 "subtask_outputs": None,
                 "explanation": {"id": "main-task", "answer": None},
@@ -510,7 +506,6 @@ class SmolagentsPDT(System):
             "id": query_id,
             "runtime": runtime,
             "timeout": False,
-            "high_level_plan": pdt_result["high_level_plan"],
             "subtasks": pdt_result["subtasks"],
             "subtask_outputs": pdt_result["subtask_outputs"],
             "explanation": {"id": "main-task", "answer": pdt_result["final_answer"]},
