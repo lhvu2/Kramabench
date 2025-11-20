@@ -17,6 +17,20 @@ CRITIQUE_AGENT_PROMPT_TEMPLATE = """The agent has completed the following step:
 Reply with your reasoning and recommendation.
 """
 
+@tool
+def write_file(path: str, content: str) -> str:
+    """
+    Writes the given content to a file at the specified path.
+    Args:
+        path (str): The file path where the content should be written.
+        content (str): The content to write to the file.
+    Returns:
+        str: Confirmation message indicating the file has been written.
+    """
+    with open(path, "w") as f:
+        f.write(content)
+    return f"written to {path}"
+
 @tool                                                                                                                                                    
 def process_beach_data(file_path:str) -> pd.DataFrame:
     """
