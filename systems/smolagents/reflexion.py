@@ -20,7 +20,8 @@ import time
 from dotenv import load_dotenv
 from .text_inspector_tool import TextInspectorTool
 from .answer_inspector_tool import AnswerInspectorTool
-from .tools import list_input_filepaths, get_csv_metadata, summarize_dataframe, CRITIQUE_AGENT_PROMPT_TEMPLATE
+from .tools import write_file, list_input_filepaths, get_csv_metadata, summarize_dataframe, CRITIQUE_AGENT_PROMPT_TEMPLATE
+from .smolagents_utils import parse_token_counts
 
 from smolagents import (
     CodeAgent,
@@ -71,6 +72,41 @@ class SmolagentsReflexion(System):
         )
         if not os.path.exists(self.question_intermediate_dir):
             os.makedirs(self.question_intermediate_dir)
+    
+    def _get_output(self, answer_path: str, pipeline_code_path: str) -> (str, str):
+        """
+        Get the output from the answer and pipeline code files.
+        :param answer_path: str
+        :param pipeline_code_path: str
+        :return: (answer, pipeline_code)
+        """
+        try:
+            with open(answer_path, "r") as f:
+                answer = f.read().strip()
+        except Exception as e:
+            print_error(f"Failed to read answer file: {e}")
+            answer = "Failed to read answer."
+
+        try:
+            with open(pipeline_code_path, "r") as f:
+                pipeline_code = f.read().strip()
+        except Exception as e:
+            print_error(f"Failed to read pipeline code file: {e}")
+            pipeline_code = "Failed to read pipeline code."
+
+        return answer, pipeline_code
+    
+    def _get_token_counts(self, query_id: str) -> Dict[str, int]:
+        """
+        Get the token counts from the log file.
+        :param query_id: str
+        :return: Dict[str, int]
+        """
+        logger_path = os.path.join(self.question_intermediate_dir, f"{query_id}.txt")
+        with open(logger_path, "r") as f:
+            trace = f.read()
+        inp, out = parse_token_counts(trace)
+        return {"input_tokens": inp, "output_tokens": out}
     
     def _parse_output(self, output: str, query_id: str) -> (str, str):
         """
@@ -168,7 +204,7 @@ class SmolagentsReflexion(System):
         manager_agent = CodeAgent(
             model=self.llm_code,
             planner_model=self.llm_reason,
-            tools=[TextInspectorTool(self.llm_reason, self.text_limit), list_input_filepaths], #process_beach_data
+            tools=[TextInspectorTool(self.llm_reason, self.text_limit), list_input_filepaths, write_file], #process_beach_data
             max_steps=self.max_steps,
             verbosity_level=self.verbosity_level,
             additional_authorized_imports=["*"],
@@ -203,6 +239,8 @@ class SmolagentsReflexion(System):
         # TODO: 
         self._init_output_dir(query_id)
         dataset_name = query_id.split("-")[0]
+        answer_path = os.path.join(self.question_intermediate_dir, f"answer.txt")
+        pipeline_code_path = os.path.join(self.question_intermediate_dir, f"pipeline_code.py")
         task = f"""
             Workload name: {dataset_name}
             dataset_directory = {os.path.join(os.getcwd(), 'data', dataset_name, 'input')}
@@ -213,24 +251,29 @@ class SmolagentsReflexion(System):
             DO NOT assume the correctness of the intermediate results and final results. Be skeptical and ensure they are correct by cross-checking with the dataset.
             Especially, if you see missing or incomplete intermediate results (e.g., nan or 0.0), question yourself if it's a coding issue, a logic design issue, or an actual data issue.
             After every step, ask yourself if every step is necessary and if the final answer is correct.
-            **Report the final answer (just the answer, no explanation needed) AND the complete code pipeline (as a string) used to get there in your final response, in JSON format with keys "explanation" and "pipeline_code".**
-            Example final response:
-            {{"explanation": "42", "pipeline_code": "import pandas as pd\\n..."}}
+            **Report the final answer (just the answer, no explanation needed) AND the complete code pipeline used to get there in your final response, by following the instructions below.**
+            IMPORTANT (use the given write_file tool): 
+            - Write your final answer to {answer_path}
+            - Write your complete code pipeline to {pipeline_code_path}
+            You can end the task after writing the files.
         """
-        
         start_time = time.time()
         agent = self.create_agent(task_id=query_id)
-        output = agent.run(task)
+        _ = agent.run(task)
         runtime = time.time() - start_time
 
-        answer, pipeline_code = self._parse_output(output, query_id)
+        answer, pipeline_code = self._get_output(answer_path, pipeline_code_path)
+        token_counts = self._get_token_counts(query_id)
         results = {
             "id": query_id,
             "runtime": runtime,
-            "explanation": answer,
+            "explanation": {"id": "main-task", "answer": answer},
             "pipeline_code": pipeline_code,
+            "token_usage": token_counts["input_tokens"] + token_counts["output_tokens"],
+            "token_usage_input": token_counts["input_tokens"],
+            "token_usage_output": token_counts["output_tokens"],
         }
-        print(results)
+        #print(results)
         return results
 
 

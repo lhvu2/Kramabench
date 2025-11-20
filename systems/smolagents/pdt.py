@@ -19,7 +19,8 @@ import time
 
 from dotenv import load_dotenv
 from .text_inspector_tool import TextInspectorTool
-from .tools import list_input_filepaths
+from .tools import list_input_filepaths, write_file
+from .smolagents_utils import parse_token_counts
 
 from smolagents import (
     CodeAgent,
@@ -70,6 +71,41 @@ class SmolagentsPDT(System):
         )
         if not os.path.exists(self.question_intermediate_dir):
             os.makedirs(self.question_intermediate_dir)
+    
+    def _get_output(self, answer_path: str, pipeline_code_path: str) -> (str, str):
+        """
+        Get the output from the answer and pipeline code files.
+        :param answer_path: str
+        :param pipeline_code_path: str
+        :return: (answer, pipeline_code)
+        """
+        try:
+            with open(answer_path, "r") as f:
+                answer = f.read().strip()
+        except Exception as e:
+            print_error(f"Failed to read answer file: {e}")
+            answer = "Failed to read answer."
+
+        try:
+            with open(pipeline_code_path, "r") as f:
+                pipeline_code = f.read().strip()
+        except Exception as e:
+            print_error(f"Failed to read pipeline code file: {e}")
+            pipeline_code = "Failed to read pipeline code."
+
+        return answer, pipeline_code
+    
+    def _get_token_counts(self, query_id: str) -> Dict[str, int]:
+        """
+        Get the token counts from the log file.
+        :param query_id: str
+        :return: Dict[str, int]
+        """
+        logger_path = os.path.join(self.question_intermediate_dir, f"{query_id}.txt")
+        with open(logger_path, "r") as f:
+            trace = f.read()
+        inp, out = parse_token_counts(trace)
+        return {"input_tokens": inp, "output_tokens": out}
     
     def _parse_output(self, output: str, query_id: str) -> (str, str):
         """
@@ -388,14 +424,17 @@ class SmolagentsPDT(System):
             workload_name=dataset_name,
         )
         runtime = time.time() - start_time
-
+        token_counts = self._get_token_counts(query_id)
         results = {
             "id": query_id,
             "runtime": runtime,
             "high_level_plan": pdt_result["high_level_plan"],
             "subtasks": pdt_result["subtasks"],
             "subtask_outputs": pdt_result["subtask_outputs"],
-            "explanation": pdt_result["final_answer"],
+            "explanation": {"id": "main-task", "answer": pdt_result["final_answer"]},
+            "token_usage": token_counts["input_tokens"] + token_counts["output_tokens"],
+            "token_usage_input": token_counts["input_tokens"],
+            "token_usage_output": token_counts["output_tokens"],
         }
         print(results)
         return results

@@ -246,7 +246,7 @@ class SmolagentsDeepResearch(System):
             "token_usage_input": token_counts["input_tokens"],
             "token_usage_output": token_counts["output_tokens"],
         }
-        print(results)
+        #print(results)
         return results
 
 
