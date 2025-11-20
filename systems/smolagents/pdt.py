@@ -307,7 +307,7 @@ class SmolagentsPDT(System):
             ]
         """
         raw_subtasks = decomposer_agent.run(decomposer_prompt)
-
+        token_counts = self._get_token_counts(task_id)
         # Try to parse JSON (you can add more robust cleaning if needed)
         try:
             subtasks = json.loads(str(raw_subtasks))
@@ -382,6 +382,9 @@ class SmolagentsPDT(System):
                 """
             subtask_output = executor_agent.run(executor_prompt)
             subtask_outputs[sid] = subtask_output
+            agent_token_counts = self._get_token_counts(task_id)
+            token_counts["input_tokens"] += agent_token_counts["input_tokens"]
+            token_counts["output_tokens"] += agent_token_counts["output_tokens"]
 
         # Define final answer as the output of the last subtask (by id order)
         final_answer = subtask_outputs[last_id]
@@ -390,6 +393,9 @@ class SmolagentsPDT(System):
             "subtasks": subtasks,
             "subtask_outputs": subtask_outputs,
             "final_answer": final_answer,
+            "token_usage": token_counts["input_tokens"] + token_counts["output_tokens"],
+            "token_usage_input": token_counts["input_tokens"],
+            "token_usage_output": token_counts["output_tokens"],
         }
 
     def process_dataset(self, dataset_directory: str | os.PathLike) -> None:
@@ -500,7 +506,7 @@ class SmolagentsPDT(System):
         answer_path = os.path.join(self.question_intermediate_dir, f"answer.txt")
         pipeline_code_path = os.path.join(self.question_intermediate_dir, f"pipeline_code.py")
         answer, pipeline_code = self._get_output(answer_path, pipeline_code_path)
-        token_counts = self._get_token_counts(query_id)
+        
 
         results = {
             "id": query_id,
@@ -509,9 +515,9 @@ class SmolagentsPDT(System):
             "subtasks": pdt_result["subtasks"],
             "subtask_outputs": pdt_result["subtask_outputs"],
             "explanation": {"id": "main-task", "answer": pdt_result["final_answer"]},
-            "token_usage": token_counts["input_tokens"] + token_counts["output_tokens"],
-            "token_usage_input": token_counts["input_tokens"],
-            "token_usage_output": token_counts["output_tokens"],
+            "token_usage": pdt_result["token_usage"],
+            "token_usage_input": pdt_result["token_usage_input"],
+            "token_usage_output": pdt_result["token_usage_output"],
             "pipeline_code": pipeline_code,
         }
 
