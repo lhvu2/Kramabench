@@ -242,7 +242,10 @@ class SmolagentsPDT(System):
         # read the files
         for file in os.listdir(dataset_directory):
             if file.endswith(".csv"):
-                self.dataset[file] = pd.read_csv(os.path.join(dataset_directory, file))
+                try:
+                    self.dataset[file] = pd.read_csv(os.path.join(dataset_directory, file))
+                except Exception as e:
+                    print_warning(f"Failed to read {file}: {e}")
 
     @typechecked
     def serve_query(self, query: str, query_id: str = "default_name-0", subset_files: List[str] = []) -> Dict:
@@ -319,7 +322,7 @@ class SmolagentsPDT(System):
         # -------------------------------------------------------
         # Pipeline finished normally
         # -------------------------------------------------------
-        if result_container["error"] is not None:
+        if result_container["error"] is not None or result_container["result"] is None:
             return {
                 "id": query_id,
                 "runtime": runtime,
