@@ -66,6 +66,39 @@ class BaselineLLMSystemGPTo3Naive(BaselineLLMSystem):
             *args, **kwargs
         )
 
+class BaselineLLMSystemClaude37FewShot(BaselineLLMSystem):
+    def __init__(self, verbose=False, *args, **kwargs):
+        super().__init__(
+            model="claude-3-7-sonnet-latest",
+            name="BaselineLLMSystemClaude37FewShot",
+            variance="few_shot",
+            verbose=verbose,
+            supply_data_snippet=True,
+            *args, **kwargs
+        )
+
+class BaselineLLMSystemClaude37OneShot(BaselineLLMSystem):
+    def __init__(self, verbose=False, *args, **kwargs):
+        super().__init__(
+            model="claude-3-7-sonnet-latest",
+            name="BaselineLLMSystemClaude37OneShot",
+            variance="one_shot",
+            verbose=verbose,
+            supply_data_snippet=True,
+            *args, **kwargs
+        )
+
+class BaselineLLMSystemClaude37Naive(BaselineLLMSystem):
+    def __init__(self, verbose=False, *args, **kwargs):
+        super().__init__(
+            model="claude-3-7-sonnet-latest",
+            name="BaselineLLMSystemClaude37Naive",
+            variance="one_shot",
+            verbose=verbose,
+            supply_data_snippet=False,
+            *args, **kwargs
+        )
+
 class BaselineLLMSystemClaude35FewShot(BaselineLLMSystem):
     def __init__(self, verbose=False, *args, **kwargs):
         super().__init__(

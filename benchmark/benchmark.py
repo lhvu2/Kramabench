@@ -26,6 +26,7 @@ class Executor:
             results_directory: str | os.PathLike,
             run_subtasks: bool=False,
             use_deepresearch_subset: bool = False,
+            use_truth_subset: bool = False,
             verbose=False
         ):
         """
@@ -44,7 +45,11 @@ class Executor:
         self.verbose = verbose
         self.run_subtasks = run_subtasks
         self.use_deepresearch_subset = use_deepresearch_subset
-    
+        self.use_truth_subset = use_truth_subset
+        if self.use_deepresearch_subset and self.use_truth_subset:
+            raise ValueError("Cannot use both deepresearch_subset and truth_subset.")
+
+
     def run_task(self, task: Dict[str, Any], parent_task_query: Optional[str]=None) -> Dict[str, str | Dict | List]:
         """
         Takes a task entry and runs it on the test subject System
@@ -65,12 +70,23 @@ class Executor:
             query = task["query"]
 
         if self.use_deepresearch_subset and parent_task_query is not None:
-            deepresearch_subset = task['deepresearch_subset']
+            data_subset = task['deepresearch_subset']
+        elif self.use_truth_subset: # parent_task_query is ignored (?)
+            try: data_subset = task['data_sources']
+            except: data_subset = []
+            # if data_subset is not a list and is a single string, convert to list
+            if not isinstance(data_subset, list) and isinstance(data_subset, str):
+                # if data_subset has "./" and nothing else, data_subset = []
+                if data_subset == "./":
+                    data_subset = []
+                else: data_subset = [data_subset]
+            elif len(data_subset) == 1 and data_subset[0] == "./":
+                data_subset = []
         else:
-            deepresearch_subset = []
+            data_subset = []
 
         start_time = time.time()
-        system_overall_response = self.system.serve_query(query=query, query_id=task["id"], subset_files = deepresearch_subset)
+        system_overall_response = self.system.serve_query(query=query, query_id=task["id"], subset_files = data_subset)
         end_time = time.time()
         token_usage = system_overall_response.get("token_usage", 0)
         token_usage_input = system_overall_response.get("token_usage_input", 0)
@@ -334,7 +350,8 @@ class Benchmark:
             verbose: bool = False,
             run_subtasks: bool = False,
             use_deepresearch_subset = False,
-            evaluate_pipeline = False
+            evaluate_pipeline = False,
+            use_truth_subset = False
     ):
         systems_module = __import__("systems")
         system_class_ = getattr(systems_module, system_name)
@@ -347,6 +364,7 @@ class Benchmark:
         self.run_subtasks = run_subtasks
         self.use_deepresearch_subset = use_deepresearch_subset
         self.evaluate_pipeline = evaluate_pipeline
+        self.use_truth_subset = use_truth_subset
     
     def run_benchmark(
             self,
@@ -367,7 +385,8 @@ class Benchmark:
             results_directory=results_directory,
             verbose=verbose,
             run_subtasks=self.run_subtasks,
-            use_deepresearch_subset=self.use_deepresearch_subset
+            use_deepresearch_subset=self.use_deepresearch_subset,
+            use_truth_subset=self.use_truth_subset
         )
         results = executor.run_workload(use_system_cache=self.use_system_cache, cache_system_output=self.cache_system_output)
         # Add processing time to each result

@@ -27,7 +27,7 @@ class System:
         """
         raise NotImplementedError("System must implement the proess_dataset method.")
     
-    def serve_query(self, query: str, query_id: str) -> Dict:
+    def serve_query(self, query: str, query_id: str, subset_files: list|None) -> Dict:
         """
         `query` contains the task that the implementation is to perform in natural language
         in English. The response is expected to be in the following json format.

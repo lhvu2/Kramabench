@@ -1,5 +1,9 @@
 # MacOS junk
 .DS_Store
+# obscured workloads and datasets
+workload/*obscured*
+data/*obscured*
+
 # data/environment/
 # Byte-compiled / optimized / DLL files
 __pycache__/
