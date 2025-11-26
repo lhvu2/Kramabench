@@ -117,7 +117,7 @@ def main():
             verbose=verbose,
             run_subtasks=args.run_subtasks,
             use_deepresearch_subset=args.use_deepresearch_subset,
-            evaluate_pipeline=evaluate_pipeline
+            evaluate_pipeline=evaluate_pipeline,
             use_truth_subset = args.use_truth_subset
         )
 
