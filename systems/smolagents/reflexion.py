@@ -9,6 +9,7 @@ import json
 import pandas as pd
 import ast
 import subprocess
+import random
 from typeguard import typechecked
 from typing import Dict, List
 
@@ -182,7 +183,7 @@ class SmolagentsReflexion(System):
         critique_agent = ToolCallingAgent(
             model=self.llm_reason,
             tools=[TextInspectorTool(self.llm_reason, self.text_limit), AnswerInspectorTool(self.llm_reason), list_input_filepaths, get_csv_metadata, summarize_dataframe],
-            max_steps=1,
+            max_steps=10,
             verbosity_level=self.verbosity_level,
             logger=logger,
             planning_interval=self.planning_interval,

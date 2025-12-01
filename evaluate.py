@@ -72,6 +72,7 @@ def main():
     parser.add_argument("--use_evaluation_cache", action="store_true", default=False, help="Use cached per-task evaluations if available. Default: False")
     parser.add_argument("--cache_system_output", action="store_true", default=True, help="Cache system output. Default: True")
     parser.add_argument("--use_deepresearch_subset", action="store_true", default=False, help="Whether to use the subset of files from deepresearch experiments. Default: False")
+    parser.add_argument("--use_truth_subset", action="store_true", default=False, help="Whether to use the subset of files from truth data. Default: False")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose logging. Default: False")
     parser.add_argument("--run_subtasks", action="store_true", default=False, help="Run subtasks if set. Default: False")
     parser.add_argument("--use_truth_subset", action="store_true", default=False, help="Whether to use the subset of files from truth data. Default: False")

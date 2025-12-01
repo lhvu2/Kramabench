@@ -409,4 +409,4 @@ class Benchmark:
         eval_end_time = time.time()
         print(f"Evaluation took time {eval_end_time - eval_start_time}")
         return eval_results
-
+    
