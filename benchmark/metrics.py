@@ -224,8 +224,8 @@ class F1Approximate(Metric):
                             continue
                         denom = max(abs(t), 1e-12)  # avoid divide by zero
                         rel_err = abs(pp - t) / denom
-                        # Approximate equality threshold (e.g., 5% relative error)
-                        if rel_err <= 0.05:
+                        # Approximate equality threshold (e.g., 1% relative error)
+                        if rel_err <= 0.01:
                             found = True
                             matched_predicted.add(j)
                             break
