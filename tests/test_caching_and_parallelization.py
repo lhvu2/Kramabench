@@ -13,7 +13,6 @@ import json
 import os
 import pytest
 import shutil
-from pathlib import Path
 
 from benchmark.benchmark import Benchmark, Executor
 from systems import DummySystem
