@@ -6,7 +6,6 @@ import logging
 import os
 import re
 import time
-import threading
 from concurrent.futures import ThreadPoolExecutor
 from benchmark.benchmark_utils import print_info
 from typeguard import typechecked
