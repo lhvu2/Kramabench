@@ -76,7 +76,8 @@ class TestNoCacheScenario(CacheTestBase):
         system = DummySystem(verbose=True)
         system.process_dataset(data_dir)
 
-        workload_tasks = json.load(open(f"workload/{workload_name}.json", 'r'))
+        with open(f"workload/{workload_name}.json", 'r') as f:
+            workload_tasks = json.load(f)
 
         executor = Executor(
             system=system,
