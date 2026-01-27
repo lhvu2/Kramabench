@@ -32,7 +32,7 @@ from smolagents import (
 )
 load_dotenv()
 
-class SmolagentsPDT(System):
+class SmolagentsPDT(Smolagents):
     def __init__(self, model: str, name="example", *args, **kwargs):
         super().__init__(name, *args, **kwargs)
         self.name = name
@@ -47,6 +47,7 @@ class SmolagentsPDT(System):
         self.llm_code = LiteLLMModel(**model_params)
         if "claude" in model:
             reason_model_params = {
+                #TODO double check
                 "model_id": "o3", #"claude-3-7-sonnet-latest",
                 "custom_role_conversions": custom_role_conversions,
                 "max_completion_tokens": 8192,

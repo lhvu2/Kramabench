@@ -25,3 +25,35 @@ class Smolagents(System):
     def serve_query(self, query: str, query_id: str, subset_files: list|None) -> dict:
         print_warning("This system is a placeholder! Only use it with pre-computed cache results.")
         return { "answer": "This is a placeholder answer."}
+
+    def __getstate__(self):
+        """
+        Custom serialization to handle non-picklable LiteLLMModel objects.
+        Excludes llm_code and llm_reason, which will be recreated on unpickling.
+        """
+        state = self.__dict__.copy()
+        # Remove the unpicklable LLM model objects
+        state.pop('llm_code', None)
+        state.pop('llm_reason', None)
+        return state
+    
+    def __setstate__(self, state):
+        """
+        Custom deserialization to recreate the LiteLLMModel objects.
+        """
+        self.__dict__.update(state)
+        # Recreate the LLM models using the stored model name
+        custom_role_conversions = {"tool-call": "assistant", "tool-response": "user"}
+        if "claude" in model and "PDT" in self.name::
+            #TODO double check
+            model_id = "o3"  #"claude-3-7-sonnet-latest" 
+        else:
+            model_id = self.model
+
+        model_params = {
+            "model_id": model_id,
+            "custom_role_conversions": custom_role_conversions,
+            "max_completion_tokens": 8192,
+        }
+        self.llm_code = LiteLLMModel(**model_params)
+        self.llm_reason = LiteLLMModel(**model_params)

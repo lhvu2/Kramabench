@@ -32,7 +32,7 @@ from smolagents import (
 )
 load_dotenv()
 
-class SmolagentsDeepResearch(System):
+class SmolagentsDeepResearch(Smolagents):
     def __init__(self, model: str, name="example", *args, **kwargs):
         super().__init__(name, *args, **kwargs)
         self.dataset_directory = None  # TODO(SUT engineer): Update me

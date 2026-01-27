@@ -33,7 +33,7 @@ from smolagents import (
 )
 load_dotenv()
 
-class SmolagentsReflexion(System):
+class SmolagentsReflexion(Smolagents):
     def __init__(self, model: str, name="example", *args, **kwargs):
         super().__init__(name, *args, **kwargs)
         self.name = name
