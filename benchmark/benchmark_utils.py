@@ -149,7 +149,7 @@ def merge_task_caches(
 def get_most_recent_cache(
     cache_dir: str | os.PathLike, basename: str
 ) -> Optional[str | os.PathLike]:
-    pattern = os.path.join(cache_dir, f"{basename}_*.json")
+    pattern = os.path.join(cache_dir, f"{basename}*.json")
     files = [f for f in glob(pattern) if "worker" not in f]
     if not files:
         return None
