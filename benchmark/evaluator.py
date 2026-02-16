@@ -38,7 +38,7 @@ class Evaluator:
             for answer_type in self.answer_type_fixtures:
                 self.answer_to_metric_dict[answer_type["name"]] = answer_type["metrics"]
         
-        self.pipeline_evaluation_engine = GPTInterface(model="gpt-4o-mini")
+        self.pipeline_evaluation_engine = GPTInterface(model="gpt-5-mini")
         self.run_subtasks = run_subtasks
         self.evaluate_pipeline = evaluate_pipeline
     
