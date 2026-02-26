@@ -7,6 +7,7 @@ import os
 import pandas as pd
 
 from benchmark import Benchmark
+from benchmark.benchmark_utils import print_warning
 
 def aggregate_results(system_name, results_df):
     # Aggregate metrics
@@ -98,8 +99,6 @@ def main():
 
     # Setup benchmark evaluation util directory
     task_fixture_dir = os.path.join(project_root_dir, args.task_fixtures)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    measures_path = os.path.join(system_result_dir, f"{workload}_measures_{timestamp}.csv")
     aggregated_results_path = os.path.join(result_root_dir, "aggregated_results.csv")
     evaluate_pipeline = not args.no_pipeline_eval
 
@@ -111,7 +110,34 @@ def main():
     else:
         dataset_name = workload
 
-    if not args.use_evaluation_cache:
+    results_df = None
+    if args.use_evaluation_cache:
+        # parse the most recent workload file based on the timestamps in the filename
+        timestamp = None
+        measures_path = ""
+        for filename in os.listdir(system_result_dir):
+            if filename.startswith(dataset_name) and filename.endswith(".csv"):
+                workload_timestamp = filename.split(".csv")[0].split("measures_")[1]
+                workload_timestamp = datetime.datetime.strptime(workload_timestamp, "%Y%m%d_%H%M%S")
+                if timestamp is None or workload_timestamp > timestamp:
+                    measures_path = os.path.join(system_result_dir, filename)
+                    timestamp = workload_timestamp
+
+        if not os.path.exists(measures_path):
+            print_warning(f"Cached evaluation results not found. Running the benchmark to generate them.")
+        else:
+            print(f"Using cached detailed evaluation results on workload {workload} from time: {timestamp}")
+            results_df = pd.read_csv(measures_path)
+            converted_df = pd.to_numeric(results_df['value'], errors='coerce')
+            results_df['value'] = converted_df.combine_first(results_df['value'])
+
+            if not args.run_subtasks:
+                results_df = results_df[results_df['task_id'].apply(lambda x: x.count('-') < 3)]
+                results_df = results_df[results_df['metric'] != 'llm_code_eval']
+
+    if not args.use_evaluation_cache or results_df is None:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        measures_path = os.path.join(system_result_dir, f"{workload}_measures_{timestamp}.csv")
         benchmark = Benchmark(
             system_name=system_name,
             task_fixture_directory=task_fixture_dir,
@@ -160,28 +186,6 @@ def main():
 
         if verbose:
             print(results_df)
-    else:
-        # parse the most recent workload file based on the timestamps in the filename
-        timestamp = None
-        measures_path = ""
-        for filename in os.listdir(system_result_dir):
-            if filename.startswith(dataset_name) and filename.endswith(".csv"):
-                workload_timestamp = filename.split(".csv")[0].split("measures_")[1]
-                workload_timestamp = datetime.datetime.strptime(workload_timestamp, "%Y%m%d_%H%M%S")
-                if timestamp is None or workload_timestamp > timestamp:
-                    measures_path = os.path.join(system_result_dir, filename)
-                    timestamp = workload_timestamp
-
-        if not os.path.exists(measures_path):
-            raise FileNotFoundError(f"Cached evaluation results not found at {measures_path}. Please run the benchmark without --use_evaluation_cache to generate them first!")
-        print(f"Using cached detailed evaluation results on workload {workload} from time: {timestamp}")
-        results_df = pd.read_csv(measures_path)
-        converted_df = pd.to_numeric(results_df['value'], errors='coerce')
-        results_df['value'] = converted_df.combine_first(results_df['value'])
-
-        if not args.run_subtasks:
-            results_df = results_df[results_df['task_id'].apply(lambda x: x.count('-') < 3)]
-            results_df = results_df[results_df['metric'] != 'llm_code_eval']
 
     aggregated_df = aggregate_results(system_name, results_df)
     # Update aggregated results file
