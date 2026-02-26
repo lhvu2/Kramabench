@@ -118,7 +118,11 @@ class Benchmark:
                 with open(cache_path, "r") as f:
                     results = json.load(f)
                 # Patched to filter cached results by task_ids in current workload, in case of overlapping workloads with different task_ids
-                cached_results_by_id = {r.get("task_id"): r for r in results if basename in r.get("task_id", "")}
+                if 'obscured' in basename:
+                    checkname = basename.replace('-obscured', '')
+                else:                
+                    checkname = basename
+                cached_results_by_id = {r.get("task_id"): r for r in results if checkname in r.get("task_id", "")}
                 missing_tasks = [
                     tid for tid in task_ids if tid not in cached_results_by_id
                 ]
